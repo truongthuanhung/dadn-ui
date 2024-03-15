@@ -1,0 +1,11 @@
+.Sidebar {
+    transition: all linear 0.2s;
+}
+.SidebarHide {
+    transform: translateX(-180px);
+}
+@media (max-width: 767px) {
+    .SidebarHide {
+        transform: translateX(-100%);
+    }
+}
