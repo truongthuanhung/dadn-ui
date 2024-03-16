@@ -7,6 +7,7 @@ import Login from '../pages/Login';
 const publicRoutes = [
     { path: '/', component: Home },
     { path: '', component: Home },
+    { path: '/dadn-ui', component: Home },
 ];
 
 const authRoutes = [{ path: '/login', component: Login }];
