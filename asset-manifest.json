@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/dadn-ui/static/css/main.1edc39a8.css",
-    "main.js": "/dadn-ui/static/js/main.6899ca12.js",
+    "main.js": "/dadn-ui/static/js/main.78849678.js",
     "static/js/453.38c6ad90.chunk.js": "/dadn-ui/static/js/453.38c6ad90.chunk.js",
     "static/media/landing4.jpg": "/dadn-ui/static/media/landing4.1c58f86f1e7cdb5d27c1.jpg",
     "static/media/landing2.jpg": "/dadn-ui/static/media/landing2.4a800a1216ebe9e9e75c.jpg",
@@ -12,11 +12,11 @@
     "static/media/smartSensor.jpg": "/dadn-ui/static/media/smartSensor.d845a030739f1a199900.jpg",
     "index.html": "/dadn-ui/index.html",
     "main.1edc39a8.css.map": "/dadn-ui/static/css/main.1edc39a8.css.map",
-    "main.6899ca12.js.map": "/dadn-ui/static/js/main.6899ca12.js.map",
+    "main.78849678.js.map": "/dadn-ui/static/js/main.78849678.js.map",
     "453.38c6ad90.chunk.js.map": "/dadn-ui/static/js/453.38c6ad90.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1edc39a8.css",
-    "static/js/main.6899ca12.js"
+    "static/js/main.78849678.js"
   ]
 }
