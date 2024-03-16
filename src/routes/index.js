@@ -4,7 +4,10 @@ import Settings from '../pages/Settings';
 import Notification from '../pages/Notification';
 import Report from '../pages/Report';
 import Login from '../pages/Login';
-const publicRoutes = [{ path: '/', component: Home }];
+const publicRoutes = [
+    { path: '/', component: Home },
+    { path: '', component: Home },
+];
 
 const authRoutes = [{ path: '/login', component: Login }];
 const privateRoutes = [
