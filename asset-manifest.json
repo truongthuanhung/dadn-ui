@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/dadn-ui/static/css/main.d5f10a34.css",
-    "main.js": "/dadn-ui/static/js/main.1ce122fc.js",
+    "main.css": "/dadn-ui/static/css/main.384aa71b.css",
+    "main.js": "/dadn-ui/static/js/main.20366da0.js",
     "static/js/453.38c6ad90.chunk.js": "/dadn-ui/static/js/453.38c6ad90.chunk.js",
     "static/media/landing4.jpg": "/dadn-ui/static/media/landing4.1c58f86f1e7cdb5d27c1.jpg",
     "static/media/landing2.jpg": "/dadn-ui/static/media/landing2.4a800a1216ebe9e9e75c.jpg",
@@ -11,12 +11,12 @@
     "static/media/deviceControl.jpg": "/dadn-ui/static/media/deviceControl.3b1c1800a2b0c1300610.jpg",
     "static/media/smartSensor.jpg": "/dadn-ui/static/media/smartSensor.d845a030739f1a199900.jpg",
     "index.html": "/dadn-ui/index.html",
-    "main.d5f10a34.css.map": "/dadn-ui/static/css/main.d5f10a34.css.map",
-    "main.1ce122fc.js.map": "/dadn-ui/static/js/main.1ce122fc.js.map",
+    "main.384aa71b.css.map": "/dadn-ui/static/css/main.384aa71b.css.map",
+    "main.20366da0.js.map": "/dadn-ui/static/js/main.20366da0.js.map",
     "453.38c6ad90.chunk.js.map": "/dadn-ui/static/js/453.38c6ad90.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d5f10a34.css",
-    "static/js/main.1ce122fc.js"
+    "static/css/main.384aa71b.css",
+    "static/js/main.20366da0.js"
   ]
 }
