@@ -1,11 +1,18 @@
 import SensorSettingsItem from './SensorSettingsItem';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 const dummyData = {
     tempData: [20, 36, 14, 31],
     humidData: [100, 200, 150, 250],
     lightData: [100, 300, 0, 100],
 };
 function Settings() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (sessionStorage.getItem('isLoggedIn') === null) {
+            navigate('/login');
+        }
+    }, []);
     const [tempSensorData, setTempSensorData] = useState(dummyData.tempData);
     const [humidSensorData, setHumidSensorData] = useState(dummyData.humidData);
     const [lightSensorData, setLightSensorData] = useState(dummyData.lightData);

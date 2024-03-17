@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
 function Login() {
-    const authContext = useAuth();
     const navigate = useNavigate();
+    useEffect(() => {
+        if (sessionStorage.getItem('isLoggedIn') !== null) {
+            navigate('/');
+        }
+    }, []);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const handleLogin = () => {
         if (email === 'admin' && password === 'admin') {
-            authContext.setLogin();
+            sessionStorage.setItem('isLoggedIn', true);
             navigate('/');
         } else {
             alert('Invalid email or password!');
-            authContext.setLogout();
+        }
+    };
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
         }
     };
     return (
@@ -40,6 +47,7 @@ function Login() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onKeyDown={handleEnter}
                         required
                     />
                 </div>

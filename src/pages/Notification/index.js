@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NotifyItem from './NotifyItem';
 const notifyData = [
     {
@@ -36,6 +37,12 @@ const notifyData = [
 ];
 function Notification() {
     const [tab, setTab] = useState(1);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (sessionStorage.getItem('isLoggedIn') === null) {
+            navigate('/login');
+        }
+    }, []);
     return (
         <div className="mt-[65px] md:ml-[70px] lg:px-[75px] md:px-[40px] px-[16px] py-[24px] min-h-[800px]">
             <h2 className="text-[28px] font-bold mb-[28px]">Thông báo</h2>

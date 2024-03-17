@@ -2,10 +2,17 @@ import classNames from 'classnames/bind';
 import styles from './Dashboard.module.scss';
 import SensorItem from './SensorItem';
 import DeviceItem from './DeviceItem';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { deviceList } from './dummyData';
 const cx = classNames.bind(styles);
 function Dashboard() {
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (sessionStorage.getItem('isLoggedIn') === null) {
+            navigate('/login');
+        }
+    }, []);
     const [status1, setStatus1] = useState(false);
     const [mode1, setMode1] = useState('automatic');
     const [fanSpeed, setFanSpeed] = useState('100%');
