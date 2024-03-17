@@ -19,14 +19,14 @@ function Header({ toggleSidebar }) {
             <div className="mr-auto ml-auto">
                 <img src={mainIcon} alt="" />
             </div>
-            <div className="hidden md:flex md:gap-[54px] gap-[8px] font-semibold">
+            <div className="flex md:gap-[54px] gap-[8px] font-semibold">
                 {isLoggedIn ? (
                     <Tippy
                         animation={false}
                         interactive
                         delay={[0, 700]}
                         offset={[0, 12]}
-                        hideOnClick={false}
+                        hideOnClick={true}
                         placement="bottom-end"
                         render={(attrs) => (
                             <div
@@ -66,7 +66,9 @@ function Header({ toggleSidebar }) {
                         <Link to="/login">
                             <p>Đăng nhập</p>
                         </Link>
-                        <p>Đăng ký</p>
+                        <Link to="/login" className="hidden md:block">
+                            <p>Đăng ký</p>
+                        </Link>
                     </>
                 )}
             </div>
