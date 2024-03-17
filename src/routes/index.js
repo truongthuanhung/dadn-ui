@@ -4,6 +4,7 @@ import Settings from '../pages/Settings';
 import Notification from '../pages/Notification';
 import Report from '../pages/Report';
 import Login from '../pages/Login';
+import Profile from '../pages/Profile';
 const publicRoutes = [
     { path: '/', component: Home },
     { path: '', component: Home },
@@ -16,6 +17,7 @@ const privateRoutes = [
     { path: '/settings', component: Settings },
     { path: '/notification', component: Notification },
     { path: '/report', component: Report },
+    { path: '/profile', component: Profile },
 ];
 
 export { publicRoutes, privateRoutes, authRoutes };

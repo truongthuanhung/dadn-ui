@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 function Login() {
     const navigate = useNavigate();
+    let { state } = useLocation();
+    const initialTab = state && state.tab === 'register' ? 'register' : 'login';
+    const [tab, setTab] = useState(initialTab);
     useEffect(() => {
         if (sessionStorage.getItem('isLoggedIn') !== null) {
             navigate('/');
         }
-    }, []);
+    }, [navigate]);
+
+    //login value
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    //register value
+    const [name, setName] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const handleLogin = () => {
         if (email === 'admin' && password === 'admin') {
             sessionStorage.setItem('isLoggedIn', true);
@@ -17,47 +29,126 @@ function Login() {
             alert('Invalid email or password!');
         }
     };
+    const handleRegister = () => {
+        setTab('login');
+    };
     const handleEnter = (e) => {
         if (e.key === 'Enter') {
-            handleLogin();
+            if (tab === 'login') handleLogin();
+            else handleRegister();
         }
     };
     return (
         <div className="mt-[65px] md:ml-[70px] md:px-[220px] px-[20px] py-[50px] min-h-[800px]">
-            <div className="w-full md:w-[300px]">
-                <p className="text-[28px] font-bold mb-[10px]">Đăng nhập</p>
-                <div>
-                    <p className="text-[14px] font-semibold mb-[10px]">Email</p>
-                    <input
-                        type="text"
-                        id="email"
-                        className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
+            <div className="overflow-x-scroll md:overflow-x-hidden mb-[28px]">
+                <div className="flex flex-row items-center justify-start gap-[24px] min-w-[600px]">
+                    <div
+                        onClick={() => setTab('login')}
+                        className={`cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] ${
+                            tab === 'login' ? 'bg-[#2396EF] text-black' : 'text-[#7a7a7a]'
+                        }`}
+                    >
+                        Đăng nhập
+                    </div>
+                    <div
+                        onClick={() => setTab('register')}
+                        className={`cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] ${
+                            tab === 'register' ? 'bg-[#2396EF] text-black' : 'text-[#7a7a7a]'
+                        }`}
+                    >
+                        Đăng ký
+                    </div>
                 </div>
-                <div>
-                    <p className="text-[14px] font-semibold mb-[10px]">Mật khẩu</p>
-                    <input
-                        type="password"
-                        id="password"
-                        className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        onKeyDown={handleEnter}
-                        required
-                    />
-                </div>
-                <button
-                    onClick={handleLogin}
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                >
-                    Đăng nhập
-                </button>
             </div>
+            {tab === 'login' ? (
+                <div className="w-full md:w-[300px]">
+                    <p className="text-[28px] font-bold mb-[10px]">Đăng nhập</p>
+                    <div>
+                        <p className="text-[14px] font-semibold mb-[10px]">Email</p>
+                        <input
+                            type="text"
+                            id="email"
+                            className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <p className="text-[14px] font-semibold mb-[10px]">Mật khẩu</p>
+                        <input
+                            type="password"
+                            id="password"
+                            className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyDown={handleEnter}
+                            required
+                        />
+                    </div>
+                    <button
+                        onClick={handleLogin}
+                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                        Đăng nhập
+                    </button>
+                </div>
+            ) : (
+                <div className="w-full md:w-[300px]">
+                    <p className="text-[28px] font-bold mb-[10px]">Đăng ký</p>
+                    <div>
+                        <p className="text-[14px] font-semibold mb-[10px]">Tên</p>
+                        <input
+                            type="text"
+                            id="new-name"
+                            className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <p className="text-[14px] font-semibold mb-[10px]">Email</p>
+                        <input
+                            type="text"
+                            id="new-email"
+                            className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={newEmail}
+                            onChange={(e) => setNewEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <p className="text-[14px] font-semibold mb-[10px]">Mật khẩu</p>
+                        <input
+                            type="password"
+                            id="new-password"
+                            className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <p className="text-[14px] font-semibold mb-[10px]">Xác nhận mật khẩu</p>
+                        <input
+                            type="password"
+                            id="confirm-password"
+                            className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onKeyDown={handleEnter}
+                            required
+                        />
+                    </div>
+                    <button
+                        onClick={handleRegister}
+                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
+                        Đăng ký
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

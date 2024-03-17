@@ -30,7 +30,7 @@ function Header({ toggleSidebar }) {
                         placement="bottom-end"
                         render={(attrs) => (
                             <div
-                                className="bg-[#1e1e1e] w-[256px] py-[8px] text-white rounded-[4px]"
+                                className="bg-[#1e1e1e] w-[256px] py-[8px] text-white rounded-[4px] z-50"
                                 tabIndex="-1"
                                 {...attrs}
                             >
@@ -66,7 +66,7 @@ function Header({ toggleSidebar }) {
                         <Link to="/login">
                             <p>Đăng nhập</p>
                         </Link>
-                        <Link to="/login" className="hidden md:block">
+                        <Link to="/login" state={{ tab: 'register' }} className="hidden md:block">
                             <p>Đăng ký</p>
                         </Link>
                     </>

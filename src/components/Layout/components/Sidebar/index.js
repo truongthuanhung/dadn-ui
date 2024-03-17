@@ -5,7 +5,7 @@ import './Sidebar.scss';
 function Sidebar({ sidebarVisible, hideSidebar }) {
     return (
         <div
-            className={`Sidebar z-30 bg-[#f2f2f2] fixed top-[65px] left-0 w-full md:w-[250px] h-[100vh] pt-[85px] px-[14px]${
+            className={`Sidebar z-40 bg-[#f2f2f2] fixed top-[65px] left-0 w-full md:w-[250px] h-[100vh] pt-[85px] px-[14px]${
                 sidebarVisible ? '' : ' SidebarHide'
             }`}
         >
