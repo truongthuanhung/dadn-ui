@@ -14,11 +14,11 @@ function Header({ toggleSidebar }) {
         navigate('/');
     };
     return (
-        <div className="Header h-[65px] z-30 bg-[#f2f2f2] flex items-center pl-[34px] pr-[44px]  justify-between fixed top-0 left-0 right-0">
+        <div className="Header h-[65px] z-30 bg-[#f2f2f2] flex items-center pl-[34px] md:pr-[44px] pr-[24px] justify-between fixed top-0 left-0 right-0">
             <div className="cursor-pointer" onClick={toggleSidebar}>
                 <MenuIcon />
             </div>
-            <div className="mr-auto ml-auto">
+            <div className="absolute right-1/2 translate-x-1/2 top-0">
                 <img src={mainIcon} alt="" />
             </div>
             <div className="flex md:gap-[54px] gap-[8px] font-semibold">

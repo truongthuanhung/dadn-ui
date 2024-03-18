@@ -43,26 +43,25 @@ function Login() {
     };
     return (
         <div className="mt-[65px] md:ml-[70px] md:px-[220px] px-[20px] py-[50px] min-h-[800px]">
-            <div className="overflow-x-scroll md:overflow-x-hidden mb-[28px]">
-                <div className="flex flex-row items-center justify-start gap-[24px] min-w-[600px]">
-                    <div
-                        onClick={() => setTab('login')}
-                        className={`cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] ${
-                            tab === 'login' ? 'bg-[#2396EF] text-black' : 'text-[#7a7a7a]'
-                        }`}
-                    >
-                        Đăng nhập
-                    </div>
-                    <div
-                        onClick={() => setTab('register')}
-                        className={`cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] ${
-                            tab === 'register' ? 'bg-[#2396EF] text-black' : 'text-[#7a7a7a]'
-                        }`}
-                    >
-                        Đăng ký
-                    </div>
+            <div className="flex flex-row items-center justify-start gap-[24px] mb-[28px]">
+                <div
+                    onClick={() => setTab('login')}
+                    className={`cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] ${
+                        tab === 'login' ? 'bg-[#2396EF] text-black' : 'text-[#7a7a7a]'
+                    }`}
+                >
+                    Đăng nhập
+                </div>
+                <div
+                    onClick={() => setTab('register')}
+                    className={`cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] ${
+                        tab === 'register' ? 'bg-[#2396EF] text-black' : 'text-[#7a7a7a]'
+                    }`}
+                >
+                    Đăng ký
                 </div>
             </div>
+
             {tab === 'login' ? (
                 <div className="w-full md:w-[300px]">
                     <p className="text-[28px] font-bold mb-[10px]">Đăng nhập</p>
