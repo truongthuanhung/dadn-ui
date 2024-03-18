@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NotifyItem from './NotifyItem';
+import { useAuth } from '../../contexts/useAuth';
 const notifyData = [
     {
         content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
@@ -38,11 +39,12 @@ const notifyData = [
 function Notification() {
     const [tab, setTab] = useState(1);
     const navigate = useNavigate();
+    const authContext = useAuth();
     useEffect(() => {
-        if (sessionStorage.getItem('isLoggedIn') === null) {
+        if (!authContext.auth) {
             navigate('/login');
         }
-    }, []);
+    }, [authContext.auth, navigate]);
     return (
         <div className="mt-[65px] md:ml-[70px] lg:px-[75px] md:px-[40px] px-[16px] py-[24px] min-h-[800px]">
             <h2 className="text-[28px] font-bold mb-[28px]">Thông báo</h2>

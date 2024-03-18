@@ -5,14 +5,16 @@ import DeviceItem from './DeviceItem';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { deviceList } from './dummyData';
+import { useAuth } from '../../contexts/useAuth';
 const cx = classNames.bind(styles);
 function Dashboard() {
     const navigate = useNavigate();
+    const authContext = useAuth();
     useEffect(() => {
-        if (sessionStorage.getItem('isLoggedIn') === null) {
+        if (!authContext.auth) {
             navigate('/login');
         }
-    }, []);
+    }, [navigate, authContext.auth]);
     const [status1, setStatus1] = useState(false);
     const [mode1, setMode1] = useState('automatic');
     const [fanSpeed, setFanSpeed] = useState('100%');

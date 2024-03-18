@@ -5,13 +5,14 @@ import Notification from '../pages/Notification';
 import Report from '../pages/Report';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
+import Page404 from '../pages/404';
 const publicRoutes = [
     { path: '/', component: Home },
     { path: '', component: Home },
     { path: '/dadn-ui', component: Home },
+    { path: '/login', component: Login },
 ];
-
-const authRoutes = [{ path: '/login', component: Login }];
+const unknownRoutes = [{ path: '*', component: Page404 }];
 const privateRoutes = [
     { path: '/dashboard', component: Dashboard },
     { path: '/settings', component: Settings },
@@ -20,4 +21,4 @@ const privateRoutes = [
     { path: '/profile', component: Profile },
 ];
 
-export { publicRoutes, privateRoutes, authRoutes };
+export { publicRoutes, privateRoutes, unknownRoutes };

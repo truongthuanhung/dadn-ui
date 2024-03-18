@@ -30,7 +30,7 @@ function Home() {
                     {showSlider === 3 && <img src={Landing3} alt="" className="block w-full h-full object-cover" />}
                     {showSlider === 4 && <img src={Landing4} alt="" className="block w-full h-full object-cover" />}
                 </div>
-                <div className="w-full md:w-2/5 h-full lg:px-[40px] lg:py-[76px] md:px-[10px] md:py-[32px] py-[22px] px-[10px] min-h-[286px] bg-[#fafafa]">
+                <div className="w-full md:w-2/5 h-full lg:px-[40px] lg:py-[76px] md:px-[10px] md:py-[32px] py-[22px] px-[10px] min-h-[300px] bg-[#fafafa]">
                     {showSlider === 1 && (
                         <>
                             <p className="text-[20px] font-bold">SMART HOME WEBSITE</p>

@@ -1,8 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { publicRoutes, privateRoutes, authRoutes } from './routes';
+import { publicRoutes, privateRoutes, unknownRoutes } from './routes';
 import DefaultLayout from './components/Layout/DefaultLayout';
+import { useAuth } from './contexts/useAuth';
 function App() {
-    const renderRoutes = [...publicRoutes, ...privateRoutes, ...authRoutes];
+    const authContext = useAuth();
+    console.log(authContext);
+    const renderRoutes = authContext.auth
+        ? [...publicRoutes, ...privateRoutes, ...unknownRoutes]
+        : [...publicRoutes, ...unknownRoutes];
     return (
         <Router>
             <div className="App">

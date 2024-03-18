@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/useAuth';
 function Login() {
     const navigate = useNavigate();
     let { state } = useLocation();
     const initialTab = state && state.tab === 'register' ? 'register' : 'login';
     const [tab, setTab] = useState(initialTab);
+    const authContext = useAuth();
     useEffect(() => {
-        if (sessionStorage.getItem('isLoggedIn') !== null) {
+        if (authContext.auth) {
             navigate('/');
         }
-    }, [navigate]);
+    }, [authContext.auth, navigate]);
 
     //login value
     const [email, setEmail] = useState('');
@@ -24,6 +26,7 @@ function Login() {
     const handleLogin = () => {
         if (email === 'admin' && password === 'admin') {
             sessionStorage.setItem('isLoggedIn', true);
+            authContext.setLoggedIn();
             navigate('/');
         } else {
             alert('Invalid email or password!');

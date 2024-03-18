@@ -4,11 +4,13 @@ import mainIcon from '../../../../assets/main.png';
 import Tippy from '@tippyjs/react';
 import Landing from '../../../../assets/landing.jpg';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../../contexts/useAuth';
 function Header({ toggleSidebar }) {
-    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     const navigate = useNavigate();
+    const authContext = useAuth();
     const handleLogout = () => {
         sessionStorage.removeItem('isLoggedIn');
+        authContext.setLoggedOut();
         navigate('/');
     };
     return (
@@ -20,7 +22,7 @@ function Header({ toggleSidebar }) {
                 <img src={mainIcon} alt="" />
             </div>
             <div className="flex md:gap-[54px] gap-[8px] font-semibold">
-                {isLoggedIn ? (
+                {authContext.auth ? (
                     <Tippy
                         animation={false}
                         interactive
@@ -40,10 +42,12 @@ function Header({ toggleSidebar }) {
                                     <p className="text-[10px] opacity-60">hung.truongthuan@hcmut.edu.vn</p>
                                 </div>
                                 <div>
-                                    <div className="cursor-pointer px-[20px] h-[36px] flex items-center gap-[12px] hover:bg-[#0d9fff]">
-                                        <UserIcon />
-                                        <p className="text-[12px]">Quản lý tài khoản</p>
-                                    </div>
+                                    <Link to="/profile">
+                                        <div className="cursor-pointer px-[20px] h-[36px] flex items-center gap-[12px] hover:bg-[#0d9fff]">
+                                            <UserIcon />
+                                            <p className="text-[12px]">Quản lý tài khoản</p>
+                                        </div>
+                                    </Link>
                                     <div className="cursor-pointer px-[20px] h-[36px] flex items-center gap-[12px] hover:bg-[#0d9fff]">
                                         <SettingsIconWhite />
                                         <p className="text-[12px]">Cài đặt</p>
