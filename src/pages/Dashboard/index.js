@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './Dashboard.module.scss';
 import SensorItem from './SensorItem';
 import DeviceItem from './DeviceItem';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
 function useDebounce(value, delay) {
@@ -42,13 +42,13 @@ function Dashboard() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
             body: JSON.stringify({ value: data }),
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                //console.log(data);
                 setLoading(false);
                 setRenderLight1(!renderLight1);
             })
@@ -70,13 +70,13 @@ function Dashboard() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
             body: JSON.stringify({ value: data }),
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                //console.log(data);
                 setLoading(false);
                 setRenderLight2(!renderLight2);
             })
@@ -90,7 +90,7 @@ function Dashboard() {
         setLoading(true);
         fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-2/data/last', {
             headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
         })
             .then((res) => res.json())
@@ -114,13 +114,13 @@ function Dashboard() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
             body: JSON.stringify({ value: data }),
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                //console.log(data);
                 setLoading(false);
                 setRenderLight3(!renderLight3);
             })
@@ -134,7 +134,7 @@ function Dashboard() {
         setLoading(true);
         fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-3/data/last', {
             headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
         })
             .then((res) => res.json())
@@ -158,13 +158,13 @@ function Dashboard() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
             body: JSON.stringify({ value: data }),
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                //console.log(data);
                 setLoading(false);
                 setRenderLight4(!renderLight4);
             })
@@ -178,7 +178,7 @@ function Dashboard() {
         setLoading(true);
         fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-4/data/last', {
             headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
         })
             .then((res) => res.json())
@@ -190,38 +190,45 @@ function Dashboard() {
     }, [renderLight4]);
     //FAN
 
-    const [fanSpeed, setFanSpeed] = useState(0);
+    const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
     const [modeFan, setModeFan] = useState('automatic');
     const debounced = useDebounce(fanSpeed, 2000);
-
+    const isFirstRender = useRef(true);
     useEffect(() => {
-        if (loading) return;
-        setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-            body: JSON.stringify({ value: fanSpeed }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setLoading(false);
-                setRenderFan(!renderFan);
+        if (loading || debounced === '') {
+            console.log('Please wait........');
+        } else if (isFirstRender.current) {
+            isFirstRender.current = false;
+            console.log('First render not call.........')
+        } else {
+            setLoading(true);
+            fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
+                },
+                body: JSON.stringify({ value: fanSpeed }),
             })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+                .then((response) => response.json())
+                .then((data) => {
+                    setLoading(false);
+                    setRenderFan(!renderFan);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    setLoading(false);
+                });
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounced]);
     useEffect(() => {
         setLoading(true);
         fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-1/data/last', {
             headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
         })
             .then((res) => res.json())
@@ -236,7 +243,7 @@ function Dashboard() {
         setLoading(true);
         fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data/last', {
             headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
+                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
             },
         })
             .then((res) => res.json())
