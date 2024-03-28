@@ -5,6 +5,7 @@ import DeviceItem from './DeviceItem';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
+import { getDeviceStatus, postDeviceStatus } from '../../services/deviceService';
 function useDebounce(value, delay) {
     const [debounceValue, setDebounceValue] = useState(value);
     useEffect(() => {
@@ -37,25 +38,17 @@ function Dashboard() {
     const handleChangeStatusLight1 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-1/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                //console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-1/data', { value: data });
                 setLoading(false);
                 setRenderLight1(!renderLight1);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState(false);
@@ -65,39 +58,33 @@ function Dashboard() {
     const handleChangeStatusLight2 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-2/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                //console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-2/data', { value: data });
                 setLoading(false);
                 setRenderLight2(!renderLight2);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-2/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight2(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-2/data/last');
+                //console.log(response);
+                setStatusLight2(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderLight2]);
 
@@ -109,39 +96,32 @@ function Dashboard() {
     const handleChangeStatusLight3 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-3/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                //console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-3/data', { value: data });
                 setLoading(false);
                 setRenderLight3(!renderLight3);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-3/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight3(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-3/data/last');
+                setStatusLight3(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderLight3]);
 
@@ -153,39 +133,32 @@ function Dashboard() {
     const handleChangeStatusLight4 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-4/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                //console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-4/data', { value: data });
                 setLoading(false);
                 setRenderLight4(!renderLight4);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-4/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight4(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-4/data/last');
+                setStatusLight4(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderLight4]);
     //FAN
@@ -193,64 +166,62 @@ function Dashboard() {
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
     const [modeFan, setModeFan] = useState('automatic');
-    const debounced = useDebounce(fanSpeed, 2000);
+    const debounced = useDebounce(fanSpeed, 1000);
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (loading || debounced === '') {
             console.log('Please wait........');
         } else if (isFirstRender.current) {
             isFirstRender.current = false;
-            console.log('First render not call.........')
+            console.log('First render not call.........');
         } else {
             setLoading(true);
-            fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-                },
-                body: JSON.stringify({ value: fanSpeed }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
+            try {
+                const callAPI = async () => {
+                    console.log(fanSpeed);
+                    await postDeviceStatus('feeds/fan/data', { value: fanSpeed });
                     setLoading(false);
                     setRenderFan(!renderFan);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                    setLoading(false);
-                });
+                };
+                callAPI();
+            } catch (err) {
+                console.log(err);
+                setLoading(false);
+            }
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounced]);
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-1/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight1(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-1/data/last');
+                setStatusLight1(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderLight1]);
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_CCzb25m8k33R9FxcSQiieWKsEtYb',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setFanSpeed(Number(data.value));
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/fan/data/last');
+                // console.log(response.data.value);
+                setFanSpeed(Number(response.data.value));
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderFan]);
 
