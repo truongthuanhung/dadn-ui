@@ -18,52 +18,56 @@ function DeviceItem({
     if (deviceType === 'door') Icon = DoorIcon;
     return (
         <div
-            className={`flex flex-col justify-between py-[28px] px-[24px] w-[296px] h-[208px] rounded-[20px] ${
-                deviceStatus ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
+            className={`flex flex-row items-center justify-between rounded-[20px] w-full lg:px-[32px] md:px-[12px] px-[24px] py-[10px] ${
+                deviceStatus === '1' ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
             }`}
         >
-            <div className={cx('flex items-center justify-between')}>
-                <div className={cx('w-[44px] h-[44px] bg-[#2892F0] rounded-[10px] flex items-center justify-center')}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between lg:gap-[48px] gap-[18px]">
+                <div className="w-[56px] h-[56px] rounded-[10px] bg-[#2892F0] flex justify-center items-center">
                     <Icon />
                 </div>
-                <div className={cx('flex items-center gap-[34px]')}>
-                    {deviceType === 'door' ? (
-                        <p className={cx('text-[18px] font-semibold text-[#5C5C5C]')}>
-                            {deviceStatus ? 'Open' : 'Closed'}
-                        </p>
-                    ) : (
-                        <p className={cx('text-[18px] font-semibold text-[#5C5C5C]')}>{deviceStatus ? 'On' : 'Off'}</p>
-                    )}
-                    <Switch onChange={() => toggleDeviceStatus(!deviceStatus)} checked={deviceStatus} />
-                </div>
+                <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] min-w-[76px]">{deviceName}</p>
             </div>
-            {deviceType === 'fan' && (
-                <div className={cx('flex items-center justify-end gap-[34px]')}>
+            <div className="flex-1 flex flex-col md:flex-row justify-end lg:gap-[328px] gap-[48px]">
+                {deviceType === 'fan' ? (
+                    <div className="flex flex-row items-center justify-between lg:gap-[34px] gap-[12px]">
+                        <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            step="10"
+                            value={fanSpeed}
+                            onChange={setFanSpeed}
+                            className="flex-1 w-[100px] lg:w-[250px] block h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                        />
+                        <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] md:min-w-[122px]">
+                            Speed: {fanSpeed}%
+                        </p>
+                    </div>
+                ) : (
+                    <div className="flex flex-row items-center justify-end gap-[18px]">
+                        <p className="font-bold text-[#1a1a1a] text-[16px] min-w-[58px]">
+                            {deviceType !== 'door' && (deviceStatus === '1' ? 'On' : 'Off')}
+                            {deviceType === 'door' && (deviceStatus === '1' ? 'Opened' : 'Closed')}
+                        </p>
+
+                        <Switch onChange={toggleDeviceStatus} checked={deviceStatus === '1'} />
+                    </div>
+                )}
+
+                <div className={cx('flex items-center justify-end flex-row')}>
+                    <p className="font-bold text-[#1a1a1a] text-[16px] mr-[8px]">Mode:</p>
                     <select
-                        value={fanSpeed}
-                        onChange={setFanSpeed}
-                        className={`text-[18px] font-semibold text-[#5C5C5C] ${
-                            deviceStatus ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
+                        value={deviceMode}
+                        onChange={changeDeviceMode}
+                        className={`font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] ${
+                            deviceStatus === '1' ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
                         }`}
                     >
-                        <option value="100%">Speed 100%</option>
-                        <option value="50%">Speed 50%</option>
-                        <option value="25%">Speed 25%</option>
+                        <option value="automatic">Automatic</option>
+                        <option value="manual">Manual</option>
                     </select>
                 </div>
-            )}
-            <div className={cx('flex items-center justify-between')}>
-                <p className={cx('text-[18px] font-semibold text-[#5C5C5C]')}>{deviceName}</p>
-                <select
-                    value={deviceMode}
-                    onChange={changeDeviceMode}
-                    className={`text-[18px] font-semibold text-[#5C5C5C] ${
-                        deviceStatus ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
-                    }`}
-                >
-                    <option value="automatic">Automatic</option>
-                    <option value="manual">Manual</option>
-                </select>
             </div>
         </div>
     );

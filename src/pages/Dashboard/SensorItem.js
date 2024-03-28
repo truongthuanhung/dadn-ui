@@ -7,10 +7,10 @@ function SensorItem({ sensorType, sensorValue, sensorUnit, upperThreshold, lower
     const sensorClass = sensorType ? sensorType.toLowerCase() : '';
     return (
         <div className={cx(sensorClass, 'flex text-white py-[20px] w-[296px] h-[200px] rounded-[20px]')}>
-            <div className={cx('w-1/2 border-r-[2px] border-white py-[12px] px-[24px]')}>
-                <p className={cx('text-[16px] text-center font-bold')}>{sensorType}</p>
-                <p className={cx('text-[54px] font-semibold text-center')}>{sensorValue}</p>
-                <p className={cx('text-[18px] text-center')}>{sensorUnit}</p>
+            <div className={cx('w-1/2 border-r-[2px] border-white py-[12px] px-[24px] flex flex-col items-center justify-between')}>
+                <p className={cx('text-[16px] font-bold')}>{sensorType}</p>
+                <p className={cx('text-[42px] font-semibold')}>{sensorValue}</p>
+                <p className={cx('text-[20px]')}>{sensorUnit}</p>
             </div>
             <div className={cx('w-1/2 px-[24px] py-[12px]')}>
                 <p className={cx('text-[12px] text-center font-semibold')}>

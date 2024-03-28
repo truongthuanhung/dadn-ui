@@ -7,7 +7,11 @@ import DeviceControl from '../../assets/deviceControl.jpg';
 import Report from '../../assets/report.jpg';
 import { LeftArrowIcon, RightArrowIcon } from '../../components/Icons/Icons';
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../contexts/useAuth';
+import { Link } from 'react-router-dom';
 function Home() {
+    const authContext = useAuth();
+    const isLoggedIn = authContext.auth;
     const [showSlider, setShowSlider] = useState(1);
     const nextSlider = () => {
         setShowSlider(showSlider === 4 ? 1 : showSlider + 1);
@@ -41,7 +45,9 @@ function Home() {
                                 bình thường và mở cửa cho một thế giới nơi ngôi nhà của bạn thích ứng với nhu cầu của
                                 bạn.
                             </p>
-                            <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            <Link to={isLoggedIn ? '/dashboard' : 'login'}>
+                                <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            </Link>
                         </>
                     )}
                     {showSlider === 2 && (
@@ -53,7 +59,9 @@ function Home() {
                                 camera giám sát chất lượng cao cho đến việc lắp đặt cảm biến báo động thông minh, mọi
                                 góc nhìn và không gian trong ngôi nhà đều được bảo vệ một cách toàn diện.
                             </p>
-                            <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            <Link to={isLoggedIn ? '/dashboard' : 'login'}>
+                                <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            </Link>
                         </>
                     )}
                     {showSlider === 3 && (
@@ -65,7 +73,9 @@ function Home() {
                                 thể tự động điều chỉnh ánh sáng, nhiệt độ và các thiết bị điện tử trong ngôi nhà của
                                 mình để tối ưu hóa việc sử dụng năng lượng.
                             </p>
-                            <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            <Link to={isLoggedIn ? '/dashboard' : 'login'}>
+                                <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            </Link>
                         </>
                     )}
                     {showSlider === 4 && (
@@ -78,7 +88,9 @@ function Home() {
                                 xa để phù hợp với mọi tình huống, từ bữa tiệc sang trọng đến không gian thư giãn vào
                                 buổi tối.
                             </p>
-                            <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            <Link to={isLoggedIn ? '/dashboard' : 'login'}>
+                                <p className="font-bold text-[16px] underline">Bắt đầu &gt;</p>
+                            </Link>
                         </>
                     )}
                 </div>
@@ -115,7 +127,7 @@ function Home() {
                     <RightArrowIcon />
                 </div>
             </div>
-            <div className="lg:px-[80px] md:px-[64px] px-[20px] md:pt-[27px] pt-[20px] lg:pb-[106px] md:pb-[72px] pb-[20px]">
+            <div className="lg:px-[80px] md:px-[64px] px-[20px] md:pt-[27px] pt-[20px] lg:pb-[106px] md:pb-[72px] pb-[20px] select-none">
                 <p className="text-[24px] font-bold underline">Tính năng &gt;</p>
                 <div className="flex flex-col lg:flex-row lg:gap-[84px] gap-[24px] mt-[28px]">
                     <div className="w-full lg:w-1/3">

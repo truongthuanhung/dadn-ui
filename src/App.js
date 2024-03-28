@@ -4,7 +4,6 @@ import DefaultLayout from './components/Layout/DefaultLayout';
 import { useAuth } from './contexts/useAuth';
 function App() {
     const authContext = useAuth();
-    console.log(authContext);
     const renderRoutes = authContext.auth
         ? [...publicRoutes, ...privateRoutes, ...unknownRoutes]
         : [...publicRoutes, ...unknownRoutes];
