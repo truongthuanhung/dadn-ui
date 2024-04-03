@@ -21,6 +21,42 @@ function useDebounce(value, delay) {
 }
 const cx = classNames.bind(styles);
 function Dashboard() {
+    //SENSOR
+    const [temp, setTemp] = useState(0);
+    const [light, setLight] = useState(0);
+    const [humid, setHumid] = useState(0);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Gọi 3 API cùng một lúc bằng Axios
+                const [temperatureResponse, humidityResponse, lightResponse] = await Promise.all([
+                    getDeviceStatus('feeds/temp-sensor/data/last'),
+                    getDeviceStatus('feeds/humidity-sensor/data/last'),
+                    getDeviceStatus('feeds/lighting-sensor/data/last'),
+                ]);
+
+                // Lấy dữ liệu từ các API
+                console.log(Number(temperatureResponse.data.value));
+
+                // Lưu trữ dữ liệu vào state
+                setTemp(Number(temperatureResponse.data.value));
+                setHumid(Number(humidityResponse.data.value));
+                setLight(Number(lightResponse.data.value));
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        };
+
+        // Gọi API lần đầu tiên khi component được mount
+        fetchData();
+
+        // Thiết lập interval để gọi API sau mỗi 30 giây
+        const intervalId = setInterval(fetchData, 10000);
+
+        // Cleanup để tránh memory leaks
+        return () => clearInterval(intervalId);
+    }, []);
     const navigate = useNavigate();
     const authContext = useAuth();
     useEffect(() => {
@@ -33,7 +69,7 @@ function Dashboard() {
     const [statusLight1, setStatusLight1] = useState(false);
     const [mode1, setMode1] = useState('automatic');
     const [loading, setLoading] = useState(false);
-    const [renderLight1, setRenderLight1] = useState(true);
+    //const [renderLight1, setRenderLight1] = useState(true);
 
     const handleChangeStatusLight1 = (data) => {
         if (loading) return;
@@ -42,7 +78,8 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-1/data', { value: data });
                 setLoading(false);
-                setRenderLight1(!renderLight1);
+                //setRenderLight1(!renderLight1);
+                setStatusLight1(statusLight1 === '1' ? '0' : '1');
             };
             callAPI();
         } catch (err) {
@@ -50,10 +87,11 @@ function Dashboard() {
             setLoading(false);
         }
     };
+
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState(false);
     const [mode2, setMode2] = useState('automatic');
-    const [renderLight2, setRenderLight2] = useState(true);
+    //const [renderLight2, setRenderLight2] = useState(true);
 
     const handleChangeStatusLight2 = (data) => {
         if (loading) return;
@@ -62,7 +100,8 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-2/data', { value: data });
                 setLoading(false);
-                setRenderLight2(!renderLight2);
+                //setRenderLight2(!renderLight2);
+                setStatusLight2(statusLight2 === '1' ? '0' : '1');
             };
             callAPI();
         } catch (err) {
@@ -86,12 +125,12 @@ function Dashboard() {
             setLoading(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight2]);
+    }, []);
 
     //LIGHT 3
     const [statusLight3, setStatusLight3] = useState(false);
     const [mode3, setMode3] = useState('automatic');
-    const [renderLight3, setRenderLight3] = useState(true);
+    //const [renderLight3, setRenderLight3] = useState(true);
 
     const handleChangeStatusLight3 = (data) => {
         if (loading) return;
@@ -100,7 +139,8 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-3/data', { value: data });
                 setLoading(false);
-                setRenderLight3(!renderLight3);
+                //setRenderLight3(!renderLight3);
+                setStatusLight3(statusLight3 === '1' ? '0' : '1');
             };
             callAPI();
         } catch (err) {
@@ -123,12 +163,12 @@ function Dashboard() {
             setLoading(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight3]);
+    }, []);
 
     //LIGHT 4
     const [statusLight4, setStatusLight4] = useState(false);
     const [mode4, setMode4] = useState('automatic');
-    const [renderLight4, setRenderLight4] = useState(true);
+    //const [renderLight4, setRenderLight4] = useState(true);
 
     const handleChangeStatusLight4 = (data) => {
         if (loading) return;
@@ -137,7 +177,8 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-4/data', { value: data });
                 setLoading(false);
-                setRenderLight4(!renderLight4);
+                //setRenderLight4(!renderLight4);
+                setStatusLight4(statusLight4 === '1' ? '0' : '1');
             };
             callAPI();
         } catch (err) {
@@ -160,13 +201,13 @@ function Dashboard() {
             setLoading(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight4]);
-    //FAN
+    }, []);
 
+    //FAN
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
     const [modeFan, setModeFan] = useState('automatic');
-    const debounced = useDebounce(fanSpeed, 1000);
+    const debounced = useDebounce(fanSpeed, 1500);
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (loading || debounced === '') {
@@ -189,7 +230,6 @@ function Dashboard() {
                 setLoading(false);
             }
         }
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounced]);
     useEffect(() => {
@@ -206,7 +246,7 @@ function Dashboard() {
             setLoading(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight1]);
+    }, []);
 
     useEffect(() => {
         setLoading(true);
@@ -240,7 +280,7 @@ function Dashboard() {
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Lighting"
-                                sensorValue={171.1}
+                                sensorValue={light}
                                 sensorUnit="W/m2"
                                 upperThreshold={200}
                                 lowerThreshold={100}
@@ -249,7 +289,7 @@ function Dashboard() {
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Humidity"
-                                sensorValue={37.32}
+                                sensorValue={humid}
                                 sensorUnit="%"
                                 upperThreshold={100}
                                 lowerThreshold={50}
@@ -258,7 +298,7 @@ function Dashboard() {
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Temperature"
-                                sensorValue={32}
+                                sensorValue={temp}
                                 sensorUnit="°C"
                                 upperThreshold={36}
                                 lowerThreshold={14}
@@ -303,7 +343,10 @@ function Dashboard() {
                             deviceName="Fan"
                             fanSpeed={fanSpeed}
                             deviceMode={modeFan}
-                            changeDeviceMode={() => setModeFan(modeFan === 'automatic' ? 'manual' : 'automatic')}
+                            changeDeviceMode={() => {
+                                if (loading) return;
+                                setModeFan(modeFan === 'automatic' ? 'manual' : 'automatic');
+                            }}
                             setFanSpeed={(e) => setFanSpeed(Number(e.target.value))}
                         />
                     </div>
