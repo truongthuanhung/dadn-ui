@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const deviceAPI = axios.create({
-    baseURL: 'https://io.adafruit.com/api/v2/hungtruongthuan/',
+    baseURL: 'https://io.adafruit.com/api/v2/',
     headers: {
         'Content-Type': 'application/json',
     },
