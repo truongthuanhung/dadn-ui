@@ -2,9 +2,10 @@ import classNames from 'classnames/bind';
 import styles from './Dashboard.module.scss';
 import SensorItem from './SensorItem';
 import DeviceItem from './DeviceItem';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
+import { getDeviceStatus, postDeviceStatus } from '../../services/deviceService';
 function useDebounce(value, delay) {
     const [debounceValue, setDebounceValue] = useState(value);
     useEffect(() => {
@@ -20,6 +21,42 @@ function useDebounce(value, delay) {
 }
 const cx = classNames.bind(styles);
 function Dashboard() {
+    //SENSOR
+    const [temp, setTemp] = useState(0);
+    const [light, setLight] = useState(0);
+    const [humid, setHumid] = useState(0);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Gọi 3 API cùng một lúc bằng Axios
+                const [temperatureResponse, humidityResponse, lightResponse] = await Promise.all([
+                    getDeviceStatus('feeds/temp-sensor/data/last'),
+                    getDeviceStatus('feeds/humidity-sensor/data/last'),
+                    getDeviceStatus('feeds/lighting-sensor/data/last'),
+                ]);
+
+                // Lấy dữ liệu từ các API
+                console.log(Number(temperatureResponse.data.value));
+
+                // Lưu trữ dữ liệu vào state
+                setTemp(Number(temperatureResponse.data.value));
+                setHumid(Number(humidityResponse.data.value));
+                setLight(Number(lightResponse.data.value));
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+            }
+        };
+
+        // Gọi API lần đầu tiên khi component được mount
+        fetchData();
+
+        // Thiết lập interval để gọi API sau mỗi 30 giây
+        const intervalId = setInterval(fetchData, 10000);
+
+        // Cleanup để tránh memory leaks
+        return () => clearInterval(intervalId);
+    }, []);
     const navigate = useNavigate();
     const authContext = useAuth();
     useEffect(() => {
@@ -30,220 +67,201 @@ function Dashboard() {
 
     //LIGHT 1
     const [statusLight1, setStatusLight1] = useState(false);
-    const [mode1, setMode1] = useState('automatic');
+    const [mode1, setMode1] = useState('manual');
     const [loading, setLoading] = useState(false);
-    const [renderLight1, setRenderLight1] = useState(true);
+    //const [renderLight1, setRenderLight1] = useState(true);
 
     const handleChangeStatusLight1 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-1/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-1/data', { value: data });
                 setLoading(false);
-                setRenderLight1(!renderLight1);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+                //setRenderLight1(!renderLight1);
+                setStatusLight1(statusLight1 === '1' ? '0' : '1');
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
+
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState(false);
-    const [mode2, setMode2] = useState('automatic');
-    const [renderLight2, setRenderLight2] = useState(true);
+    const [mode2, setMode2] = useState('manual');
+    //const [renderLight2, setRenderLight2] = useState(true);
 
     const handleChangeStatusLight2 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-2/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-2/data', { value: data });
                 setLoading(false);
-                setRenderLight2(!renderLight2);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+                //setRenderLight2(!renderLight2);
+                setStatusLight2(statusLight2 === '1' ? '0' : '1');
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-2/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight2(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-2/data/last');
+                //console.log(response);
+                setStatusLight2(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight2]);
+    }, []);
 
     //LIGHT 3
     const [statusLight3, setStatusLight3] = useState(false);
-    const [mode3, setMode3] = useState('automatic');
-    const [renderLight3, setRenderLight3] = useState(true);
+    const [mode3, setMode3] = useState('manual');
+    //const [renderLight3, setRenderLight3] = useState(true);
 
     const handleChangeStatusLight3 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-3/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-3/data', { value: data });
                 setLoading(false);
-                setRenderLight3(!renderLight3);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+                //setRenderLight3(!renderLight3);
+                setStatusLight3(statusLight3 === '1' ? '0' : '1');
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-3/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight3(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-3/data/last');
+                setStatusLight3(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight3]);
+    }, []);
 
     //LIGHT 4
     const [statusLight4, setStatusLight4] = useState(false);
-    const [mode4, setMode4] = useState('automatic');
-    const [renderLight4, setRenderLight4] = useState(true);
+    const [mode4, setMode4] = useState('manual');
+    //const [renderLight4, setRenderLight4] = useState(true);
 
     const handleChangeStatusLight4 = (data) => {
         if (loading) return;
         setLoading(true);
-
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-4/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-            body: JSON.stringify({ value: data }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/light-4/data', { value: data });
                 setLoading(false);
-                setRenderLight4(!renderLight4);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+                //setRenderLight4(!renderLight4);
+                setStatusLight4(statusLight4 === '1' ? '0' : '1');
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-4/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight4(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-4/data/last');
+                setStatusLight4(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight4]);
+    }, []);
+
     //FAN
-
-    const [fanSpeed, setFanSpeed] = useState(0);
+    const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
-    const [modeFan, setModeFan] = useState('automatic');
-    const debounced = useDebounce(fanSpeed, 2000);
-
+    const [modeFan, setModeFan] = useState('manual');
+    const debounced = useDebounce(fanSpeed, 1500);
+    const isFirstRender = useRef(true);
     useEffect(() => {
-        if (loading) return;
-        setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-            body: JSON.stringify({ value: fanSpeed }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
+        if (loading || debounced === '') {
+            console.log('Please wait........');
+        } else if (isFirstRender.current) {
+            isFirstRender.current = false;
+            console.log('First render not call.........');
+        } else {
+            setLoading(true);
+            try {
+                const callAPI = async () => {
+                    console.log(fanSpeed);
+                    await postDeviceStatus('feeds/fan/data', { value: fanSpeed });
+                    setLoading(false);
+                    setRenderFan(!renderFan);
+                };
+                callAPI();
+            } catch (err) {
+                console.log(err);
                 setLoading(false);
-                setRenderFan(!renderFan);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                setLoading(false);
-            });
+            }
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debounced]);
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/light-1/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setStatusLight1(data.value);
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/light-1/data/last');
+                setStatusLight1(response.data.value);
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [renderLight1]);
+    }, []);
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://io.adafruit.com/api/v2/hungtruongthuan/feeds/fan/data/last', {
-            headers: {
-                'X-AIO-Key': 'aio_IrwZ77C6guRI1RBzUpCbfgGGVBZ5',
-            },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setFanSpeed(Number(data.value));
+        try {
+            const callAPI = async () => {
+                const response = await getDeviceStatus('feeds/fan/data/last');
+                // console.log(response.data.value);
+                setFanSpeed(Number(response.data.value));
                 setLoading(false);
-            });
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderFan]);
 
@@ -262,16 +280,16 @@ function Dashboard() {
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Lighting"
-                                sensorValue={171.1}
-                                sensorUnit="W/m2"
-                                upperThreshold={200}
-                                lowerThreshold={100}
+                                sensorValue={light}
+                                sensorUnit="%"
+                                upperThreshold={100}
+                                lowerThreshold={0}
                             />
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Humidity"
-                                sensorValue={37.32}
+                                sensorValue={humid}
                                 sensorUnit="%"
                                 upperThreshold={100}
                                 lowerThreshold={50}
@@ -280,7 +298,7 @@ function Dashboard() {
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Temperature"
-                                sensorValue={32}
+                                sensorValue={temp}
                                 sensorUnit="°C"
                                 upperThreshold={36}
                                 lowerThreshold={14}
@@ -323,9 +341,12 @@ function Dashboard() {
                         <DeviceItem
                             deviceType="fan"
                             deviceName="Fan"
-                            fanSpeed={fanSpeed}
+                            fanSpeed={fanSpeed === '' ? 0 : fanSpeed}
                             deviceMode={modeFan}
-                            changeDeviceMode={() => setModeFan(modeFan === 'automatic' ? 'manual' : 'automatic')}
+                            changeDeviceMode={() => {
+                                if (loading) return;
+                                setModeFan(modeFan === 'automatic' ? 'manual' : 'automatic');
+                            }}
                             setFanSpeed={(e) => setFanSpeed(Number(e.target.value))}
                         />
                     </div>

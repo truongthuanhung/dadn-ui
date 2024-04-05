@@ -5,11 +5,20 @@ import Tippy from '@tippyjs/react';
 import Landing from '../../../../assets/landing.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../contexts/useAuth';
+import { useProfile } from '../../../../contexts/useProfile';
 function Header({ toggleSidebar }) {
     const navigate = useNavigate();
     const authContext = useAuth();
+    const profileContext = useProfile();
+    console.log(profileContext);
     const handleLogout = () => {
         sessionStorage.removeItem('isLoggedIn');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('name');
+        sessionStorage.removeItem('id');
+        sessionStorage.removeItem('username');
+        profileContext.setUserInfo({ id: null, username: null, name: null });
         authContext.setLoggedOut();
         navigate('/');
     };
@@ -38,8 +47,8 @@ function Header({ toggleSidebar }) {
                             >
                                 <div className="px-[10px] py-[16px] flex flex-col items-center justify-between">
                                     <img src={Landing} alt="" className="block w-[48px] h-[48px] rounded-[50%]" />
-                                    <p className="text-[12px] mt-[8px]">Trương Thuận Hưng</p>
-                                    <p className="text-[10px] opacity-60">hung.truongthuan@hcmut.edu.vn</p>
+                                    <p className="text-[12px] mt-[8px]">{profileContext.profile.name}</p>
+                                    <p className="text-[10px] opacity-60">{profileContext.profile.username}</p>
                                 </div>
                                 <div>
                                     <Link to="/profile">
@@ -63,7 +72,7 @@ function Header({ toggleSidebar }) {
                             </div>
                         )}
                     >
-                        <p className="ml-auto cursor-pointer">Admin</p>
+                        <p className="ml-auto cursor-pointer">{profileContext.profile.name}</p>
                     </Tippy>
                 ) : (
                     <>

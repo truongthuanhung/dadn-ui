@@ -56,7 +56,7 @@ function DeviceItem({
                 )}
 
                 <div className={cx('flex items-center justify-end flex-row')}>
-                    <p className="font-bold text-[#1a1a1a] text-[16px] mr-[8px]">Mode:</p>
+                    <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] mr-[8px]">Mode:</p>
                     <select
                         value={deviceMode}
                         onChange={changeDeviceMode}
