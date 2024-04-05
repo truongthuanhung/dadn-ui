@@ -29,3 +29,23 @@ export const registerValidation = (name, username, password, confirmPassword) =>
     }
     return true;
 };
+
+export const changePassword = (password, newPassword, confirmPassword) => {
+    if (password === '') {
+        toast.error('Vui lòng nhập mật khẩu');
+        return false;
+    } else if (newPassword === '') {
+        toast.error('Vui lòng nhập mật khẩu mới');
+        return false;
+    } else if (confirmPassword === '') {
+        toast.error('Vui lòng xác nhận mật khẩu mới');
+        return false;
+    } else if (newPassword !== confirmPassword) {
+        toast.error('Mật khẩu mới không khớp');
+        return false;
+    } else if (newPassword === password) {
+        toast.error('Mật khẩu mới trùng mật khẩu cũ');
+        return false;
+    }
+    return true;
+};

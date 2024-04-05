@@ -14,7 +14,6 @@ function Header({ toggleSidebar }) {
     const handleLogout = () => {
         sessionStorage.removeItem('isLoggedIn');
         sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('userId');
         sessionStorage.removeItem('name');
         sessionStorage.removeItem('id');
         sessionStorage.removeItem('username');
