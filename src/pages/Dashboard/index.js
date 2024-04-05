@@ -67,7 +67,7 @@ function Dashboard() {
 
     //LIGHT 1
     const [statusLight1, setStatusLight1] = useState(false);
-    const [mode1, setMode1] = useState('automatic');
+    const [mode1, setMode1] = useState('manual');
     const [loading, setLoading] = useState(false);
     //const [renderLight1, setRenderLight1] = useState(true);
 
@@ -90,7 +90,7 @@ function Dashboard() {
 
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState(false);
-    const [mode2, setMode2] = useState('automatic');
+    const [mode2, setMode2] = useState('manual');
     //const [renderLight2, setRenderLight2] = useState(true);
 
     const handleChangeStatusLight2 = (data) => {
@@ -129,7 +129,7 @@ function Dashboard() {
 
     //LIGHT 3
     const [statusLight3, setStatusLight3] = useState(false);
-    const [mode3, setMode3] = useState('automatic');
+    const [mode3, setMode3] = useState('manual');
     //const [renderLight3, setRenderLight3] = useState(true);
 
     const handleChangeStatusLight3 = (data) => {
@@ -167,7 +167,7 @@ function Dashboard() {
 
     //LIGHT 4
     const [statusLight4, setStatusLight4] = useState(false);
-    const [mode4, setMode4] = useState('automatic');
+    const [mode4, setMode4] = useState('manual');
     //const [renderLight4, setRenderLight4] = useState(true);
 
     const handleChangeStatusLight4 = (data) => {
@@ -206,7 +206,7 @@ function Dashboard() {
     //FAN
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
-    const [modeFan, setModeFan] = useState('automatic');
+    const [modeFan, setModeFan] = useState('manual');
     const debounced = useDebounce(fanSpeed, 1500);
     const isFirstRender = useRef(true);
     useEffect(() => {
@@ -281,9 +281,9 @@ function Dashboard() {
                             <SensorItem
                                 sensorType="Lighting"
                                 sensorValue={light}
-                                sensorUnit="W/m2"
-                                upperThreshold={200}
-                                lowerThreshold={100}
+                                sensorUnit="%"
+                                upperThreshold={100}
+                                lowerThreshold={0}
                             />
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
@@ -341,7 +341,7 @@ function Dashboard() {
                         <DeviceItem
                             deviceType="fan"
                             deviceName="Fan"
-                            fanSpeed={fanSpeed}
+                            fanSpeed={fanSpeed === '' ? 0 : fanSpeed}
                             deviceMode={modeFan}
                             changeDeviceMode={() => {
                                 if (loading) return;
