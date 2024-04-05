@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
+import { loginAPI, registerAPI } from '../../services/loginAPI';
+import { userInfoAPI } from '../../services/userInfoAPI';
+import { useProfile } from '../../contexts/useProfile';
+import { toast } from '../../utils/toastify';
 function Login() {
     const navigate = useNavigate();
     let { state } = useLocation();
     const initialTab = state && state.tab === 'register' ? 'register' : 'login';
     const [tab, setTab] = useState(initialTab);
     const authContext = useAuth();
+    const profileContext = useProfile();
     useEffect(() => {
         if (authContext.auth) {
             navigate('/');
@@ -23,17 +28,41 @@ function Login() {
     const [newEmail, setNewEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const handleLogin = () => {
-        if (email === 'admin' && password === 'admin') {
+    const handleLogin = async () => {
+        const response = await loginAPI({ username: email, password });
+        if (response.data) {
+            sessionStorage.setItem('accessToken', response.data.token);
             sessionStorage.setItem('isLoggedIn', true);
+            const info = await userInfoAPI({ id: response.data.id });
+            sessionStorage.setItem('name', info.data.name);
+            sessionStorage.setItem('id', info.data._id);
+            sessionStorage.setItem('username', info.data.username);
             authContext.setLoggedIn();
-            navigate('/');
+            profileContext.setUserInfo({ id: info.data._id, username: info.data.username, name: info.data.name });
+            navigate('/dashboard');
         } else {
-            alert('Invalid email or password!');
+            toast.error('Wrong login information');
         }
     };
-    const handleRegister = () => {
-        setTab('login');
+    const handleRegister = async () => {
+        if (newPassword !== confirmPassword) {
+            toast.error('Password is not match');
+        } else {
+            const response = await registerAPI({ username: newEmail, name, password });
+            console.log(response);
+            if (response.data) {
+                toast.success('Account is successfully created');
+                setEmail('');
+                setPassword('');
+                setTab('login');
+                setName('');
+                setNewEmail('');
+                setNewPassword('');
+                setConfirmPassword('');
+            } else {
+                toast.error('Username is existed');
+            }
+        }
     };
     const handleEnter = (e) => {
         if (e.key === 'Enter') {
