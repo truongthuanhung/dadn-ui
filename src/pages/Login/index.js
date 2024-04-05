@@ -2,12 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
+import { loginAPI, registerAPI } from '../../services/loginAPI';
+import { userInfoAPI } from '../../services/userInfoAPI';
+import { useProfile } from '../../contexts/useProfile';
+import { toast } from '../../utils/toastify';
+import { loginValidation, registerValidation } from '../../utils/validation';
 function Login() {
     const navigate = useNavigate();
     let { state } = useLocation();
     const initialTab = state && state.tab === 'register' ? 'register' : 'login';
     const [tab, setTab] = useState(initialTab);
     const authContext = useAuth();
+    const profileContext = useProfile();
     useEffect(() => {
         if (authContext.auth) {
             navigate('/');
@@ -23,18 +29,46 @@ function Login() {
     const [newEmail, setNewEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const handleLogin = () => {
-        if (email === 'admin' && password === 'admin') {
+
+    const handleLogin = async () => {
+        if (!loginValidation(email, password)) return;
+        const response = await loginAPI({ username: email, password });
+        if (response.data) {
+            sessionStorage.setItem('accessToken', response.data.token);
             sessionStorage.setItem('isLoggedIn', true);
+            const info = await userInfoAPI({ id: response.data.id });
+            sessionStorage.setItem('name', info.data.name);
+            sessionStorage.setItem('id', info.data._id);
+            sessionStorage.setItem('username', info.data.username);
             authContext.setLoggedIn();
-            navigate('/');
+            profileContext.setUserInfo({ id: info.data._id, username: info.data.username, name: info.data.name });
+            navigate('/dashboard');
         } else {
-            alert('Invalid email or password!');
+            toast.error('Wrong login information');
         }
     };
-    const handleRegister = () => {
-        setTab('login');
+
+    const handleRegister = async () => {
+        if (!registerValidation(name, newEmail, newPassword, confirmPassword)) {
+            return;
+        } else {
+            const response = await registerAPI({ username: newEmail, name, password: newPassword });
+            console.log(response);
+            if (response.data) {
+                toast.success('Account is successfully created');
+                setEmail('');
+                setPassword('');
+                setTab('login');
+                setName('');
+                setNewEmail('');
+                setNewPassword('');
+                setConfirmPassword('');
+            } else {
+                toast.error('Username is existed');
+            }
+        }
     };
+    
     const handleEnter = (e) => {
         if (e.key === 'Enter') {
             if (tab === 'login') handleLogin();
@@ -66,14 +100,13 @@ function Login() {
                 <div className="w-full md:w-[300px]">
                     <p className="text-[28px] font-bold mb-[10px]">Đăng nhập</p>
                     <div>
-                        <p className="text-[14px] font-semibold mb-[10px]">Email</p>
+                        <p className="text-[14px] font-semibold mb-[10px]">Username</p>
                         <input
                             type="text"
                             id="email"
                             className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required
                         />
                     </div>
                     <div>
@@ -85,7 +118,6 @@ function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             onKeyDown={handleEnter}
-                            required
                         />
                     </div>
                     <button
@@ -106,18 +138,16 @@ function Login() {
                             className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            required
                         />
                     </div>
                     <div>
-                        <p className="text-[14px] font-semibold mb-[10px]">Email</p>
+                        <p className="text-[14px] font-semibold mb-[10px]">Username</p>
                         <input
                             type="text"
                             id="new-email"
                             className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value={newEmail}
                             onChange={(e) => setNewEmail(e.target.value)}
-                            required
                         />
                     </div>
                     <div>
@@ -128,7 +158,6 @@ function Login() {
                             className="mb-[10px] bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
-                            required
                         />
                     </div>
                     <div>
@@ -140,7 +169,6 @@ function Login() {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             onKeyDown={handleEnter}
-                            required
                         />
                     </div>
                     <button
