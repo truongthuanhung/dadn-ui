@@ -27,10 +27,6 @@ function Dashboard() {
                     getDeviceStatus('feeds/lighting-sensor/data/last'),
                 ]);
 
-                // Lấy dữ liệu từ các API
-                console.log(Number(temperatureResponse.data.value));
-
-                // Lưu trữ dữ liệu vào state
                 setTemp(Number(temperatureResponse.data.value));
                 setHumid(Number(humidityResponse.data.value));
                 setLight(Number(lightResponse.data.value));
@@ -202,10 +198,10 @@ function Dashboard() {
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (loading || debounced === '') {
-            console.log('Please wait........');
+            //console.log('Please wait........');
         } else if (isFirstRender.current) {
             isFirstRender.current = false;
-            console.log('First render not call.........');
+            //console.log('First render not call.........');
         } else {
             setLoading(true);
             try {

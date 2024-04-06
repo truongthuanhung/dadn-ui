@@ -10,7 +10,6 @@ function Header({ toggleSidebar }) {
     const navigate = useNavigate();
     const authContext = useAuth();
     const profileContext = useProfile();
-    console.log(profileContext);
     const handleLogout = () => {
         sessionStorage.removeItem('isLoggedIn');
         sessionStorage.removeItem('accessToken');

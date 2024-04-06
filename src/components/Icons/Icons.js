@@ -230,31 +230,22 @@ export const LogoutIcon = () => (
 
 export const MicIcon = () => (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect
-            x="12"
-            y="4"
-            width="8"
-            height="14.6667"
-            rx="3"
-            stroke="#ea4335"
-            stroke-width="2"
-            stroke-linejoin="round"
-        />
+        <rect x="12" y="4" width="8" height="14.6667" rx="3" stroke="#ea4335" strokeWidth="2" strokeLinejoin="round" />
         <path
             d="M7 14.6667C7 17.0536 7.94821 19.3428 9.63604 21.0306C11.3239 22.7185 13.6131 23.6667 16 23.6667C18.3869 23.6667 20.6761 22.7185 22.364 21.0306C24.0518 19.3428 25 17.0536 25 14.6667"
             stroke="#ea4335"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
         />
-        <path d="M16 28V25.3333" stroke="#ea4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M16 28V25.3333" stroke="#ea4335" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
 
 export const CloseIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 6L6 18" stroke="#33363F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M6 6L18 18" stroke="#33363F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M18 6L6 18" stroke="#33363F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6 6L18 18" stroke="#33363F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
 
