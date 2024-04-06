@@ -6,19 +6,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
 import { getDeviceStatus, postDeviceStatus } from '../../services/deviceService';
-function useDebounce(value, delay) {
-    const [debounceValue, setDebounceValue] = useState(value);
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebounceValue(value);
-        }, delay);
-        return () => {
-            clearTimeout(handler);
-        };
-        // eslint-disable-next-line
-    }, [value]);
-    return debounceValue;
-}
+import { MicIcon } from '../../components/Icons/Icons';
+import SpeechModal from '../../components/Modals/SpeechModal';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { useDebounce } from '../../hooks/useDebounce';
 const cx = classNames.bind(styles);
 function Dashboard() {
     //SENSOR
@@ -66,7 +57,7 @@ function Dashboard() {
     }, [navigate, authContext.auth]);
 
     //LIGHT 1
-    const [statusLight1, setStatusLight1] = useState(false);
+    const [statusLight1, setStatusLight1] = useState('0');
     const [mode1, setMode1] = useState('manual');
     const [loading, setLoading] = useState(false);
     //const [renderLight1, setRenderLight1] = useState(true);
@@ -89,7 +80,7 @@ function Dashboard() {
     };
 
     //LIGHT 2
-    const [statusLight2, setStatusLight2] = useState(false);
+    const [statusLight2, setStatusLight2] = useState('0');
     const [mode2, setMode2] = useState('manual');
     //const [renderLight2, setRenderLight2] = useState(true);
 
@@ -128,7 +119,7 @@ function Dashboard() {
     }, []);
 
     //LIGHT 3
-    const [statusLight3, setStatusLight3] = useState(false);
+    const [statusLight3, setStatusLight3] = useState('0');
     const [mode3, setMode3] = useState('manual');
     //const [renderLight3, setRenderLight3] = useState(true);
 
@@ -166,7 +157,7 @@ function Dashboard() {
     }, []);
 
     //LIGHT 4
-    const [statusLight4, setStatusLight4] = useState(false);
+    const [statusLight4, setStatusLight4] = useState('0');
     const [mode4, setMode4] = useState('manual');
     //const [renderLight4, setRenderLight4] = useState(true);
 
@@ -265,6 +256,12 @@ function Dashboard() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderFan]);
 
+    const { transcript, listening } = useSpeechRecognition();
+    const [showModal, setShowModal] = useState(false);
+    const handleMicClick = () => {
+        setShowModal(true);
+        SpeechRecognition.startListening();
+    };
     return (
         <div
             className={cx(
@@ -273,7 +270,28 @@ function Dashboard() {
             )}
         >
             <>
-                <p className={cx('text-[28px] font-bold mb-[28px]')}>Bảng điều khiển</p>
+                <div className="flex items-center lg:gap-[100px] md:gap-[50px] gap-[20px] mb-[28px]">
+                    <p className={cx('text-[28px] font-bold')}>Bảng điều khiển</p>
+                    <div className="mic flex items-center justify-center h-[56px] w-[56px] rounded-[50%] bg-[#f1f3f4]">
+                        <div className="cursor-pointer" onClick={handleMicClick}>
+                            <MicIcon />
+                        </div>
+                        {showModal && (
+                            <SpeechModal
+                                content={transcript}
+                                handleClose={() => setShowModal(false)}
+                                stopListening={SpeechRecognition.stopListening}
+                                setStatusLight1={(data) => setStatusLight1(data)}
+                                setStatusLight2={(data) => setStatusLight2(data)}
+                                setStatusLight3={(data) => setStatusLight3(data)}
+                                setStatusLight4={(data) => setStatusLight4(data)}
+                                fanSpeed={fanSpeed}
+                                setFanSpeed={(data) => setFanSpeed(data)}
+                                listening={listening}
+                            />
+                        )}
+                    </div>
+                </div>
                 <div>
                     <p className={cx('text-[20px] font-bold mb-[28px]')}>Living Room</p>
                     <div className="flex flex-col md:flex-row flex-wrap mb-[28px]">
