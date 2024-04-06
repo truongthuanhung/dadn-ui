@@ -10,3 +10,18 @@
 body {
     font-family: 'Noto Sans Mono', monospace;
 }
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.25);
+    }
+}
+
+.b_mic_pulse {
+    animation: pulse 0.5s alternate infinite;
+    transform-origin: center;
+    transition: all 0.5s;
+}

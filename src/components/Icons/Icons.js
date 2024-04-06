@@ -227,3 +227,86 @@ export const LogoutIcon = () => (
         />
     </svg>
 );
+
+export const MicIcon = () => (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect
+            x="12"
+            y="4"
+            width="8"
+            height="14.6667"
+            rx="3"
+            stroke="#ea4335"
+            stroke-width="2"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M7 14.6667C7 17.0536 7.94821 19.3428 9.63604 21.0306C11.3239 22.7185 13.6131 23.6667 16 23.6667C18.3869 23.6667 20.6761 22.7185 22.364 21.0306C24.0518 19.3428 25 17.0536 25 14.6667"
+            stroke="#ea4335"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path d="M16 28V25.3333" stroke="#ea4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+);
+
+export const CloseIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 6L6 18" stroke="#33363F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M6 6L18 18" stroke="#33363F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+);
+
+export const BingMicIcon = ({ listening }) => (
+    <svg width="102" height="102" viewBox="0 0 102 102" fill="none">
+        <circle
+            className={listening ? 'b_mic_pulse' : ''}
+            cx="51"
+            cy="51"
+            r="40"
+            fill="#007698"
+            fill-opacity="0.2"
+        ></circle>
+        <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M51 91C73.0914 91 91 73.0914 91 51C91 28.9086 73.0914 11 51 11C28.9086 11 11 28.9086 11 51C11 73.0914 28.9086 91 51 91Z"
+            fill="#022f55"
+        ></path>
+        <mask id="mask0" mask-type="alpha" maskUnits="userSpaceOnUse" x="11" y="11" width="80" height="80">
+            <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M51 91C73.0914 91 91 73.0914 91 51C91 28.9086 73.0914 11 51 11C28.9086 11 11 28.9086 11 51C11 73.0914 28.9086 91 51 91Z"
+                fill="white"
+            ></path>
+        </mask>
+        <g mask="url(#mask0)">
+            <path
+                class="b_mic_wave"
+                opacity="0.689286"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M-25 63.7205C65.4167 64.6725 43.2719 38.6305 126.786 26V108.802H-25V63.7205Z"
+                fill="#004d8e"
+            ></path>
+            <path
+                class="b_mic_wave"
+                opacity="0.689286"
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M-28 53.2162C-28 53.2162 14.3477 25.984 45.2093 36.3562C76.0709 46.7284 113.462 88.2649 112.362 88.6179V107.078H-28V53.2162Z"
+                fill="#106ebe"
+            ></path>
+        </g>
+        <svg viewBox="-15 -15 50 50">
+            <path d="m0 0h20v20h-20z" fill="none"></path>
+            <path
+                class="icon_path"
+                d="m16.379 11.694c-.458-.194-.983-.019-1.241.406-.252.416-.553.8-.895 1.142-.544.543-1.191.983-1.908 1.286-.717.304-1.504.472-2.335.472s-1.618-.168-2.335-.471-1.364-.743-1.908-1.286c-.342-.343-.644-.726-.895-1.142-.257-.425-.783-.6-1.24-.407-.552.233-.793.906-.484 1.42.338.563.744 1.081 1.205 1.543.723.722 1.584 1.308 2.542 1.714.664.28 1.375.467 2.115.56v2.069c0 .552.448 1 1 1s1-.448 1-1v-2.069c.74-.093 1.451-.279 2.114-.559h.001c.958-.406 1.819-.991 2.542-1.713l.001-.001c.461-.462.866-.979 1.205-1.542.308-.516.068-1.188-.484-1.422zm-6.379 1.306c2.209 0 4-1.791 4-4v-5c0-2.209-1.791-4-4-4s-4 1.791-4 4v5c0 2.209 1.791 4 4 4zm-2-9c0-1.103.897-2 2-2s2 .897 2 2v5c0 1.103-.897 2-2 2s-2-.897-2-2z"
+                fill="white"
+            ></path>
+        </svg>
+    </svg>
+);
