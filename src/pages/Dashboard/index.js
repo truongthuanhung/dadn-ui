@@ -46,7 +46,6 @@ function Dashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Gọi 3 API cùng một lúc bằng Axios
                 const [temperatureResponse, humidityResponse, lightResponse] = await Promise.all([
                     getDeviceStatus('feeds/temp-sensor/data/last'),
                     getDeviceStatus('feeds/humidity-sensor/data/last'),
@@ -60,14 +59,8 @@ function Dashboard() {
                 console.error('Error fetching weather data:', error);
             }
         };
-
-        // Gọi API lần đầu tiên khi component được mount
         fetchData();
-
-        // Thiết lập interval để gọi API sau mỗi 30 giây
         const intervalId = setInterval(fetchData, 5000);
-
-        // Cleanup để tránh memory leaks
         return () => clearInterval(intervalId);
     }, []);
     const navigate = useNavigate();
