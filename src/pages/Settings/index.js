@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
 import { useBound } from '../../contexts/useBound';
 import { getBound, changeBound } from '../../services/boundAPI';
-import { sensorValidation } from '../../utils/validation';
 function Settings() {
     const navigate = useNavigate();
     const authContext = useAuth();
@@ -64,7 +63,8 @@ function Settings() {
                 <div className="w-full md:w-1/2 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                     <SensorSettingsItem
                         sensorType="temperature"
-                        data={[boundContext.boundTemp.low, boundContext.boundTemp.high]}
+                        low={boundContext.boundTemp.low}
+                        high={boundContext.boundTemp.high}
                         onSave={handleTempSensorSave}
                         onChange={(newData) => boundContext.setBoundTemp(newData)}
                         onCancel={handleCancel}
@@ -73,7 +73,8 @@ function Settings() {
                 <div className="w-full md:w-1/2 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                     <SensorSettingsItem
                         sensorType="humidity"
-                        data={[boundContext.boundHumid.low, boundContext.boundHumid.high]}
+                        low={boundContext.boundHumid.low}
+                        high={boundContext.boundHumid.high}
                         onSave={handleHumidSensorSave}
                         onChange={(newData) => boundContext.setBoundHumid(newData)}
                         onCancel={handleCancel}
@@ -82,7 +83,8 @@ function Settings() {
                 <div className="w-full md:w-1/2 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                     <SensorSettingsItem
                         sensorType="lighting"
-                        data={[boundContext.boundLighting.low, boundContext.boundLighting.high]}
+                        low={boundContext.boundLighting.low}
+                        high={boundContext.boundLighting.high}
                         onSave={handleLightSensorSave}
                         onChange={(newData) => boundContext.setLighting(newData)}
                         onCancel={handleCancel}
