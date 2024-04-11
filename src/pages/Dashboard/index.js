@@ -10,27 +10,69 @@ import { MicIcon } from '../../components/Icons/Icons';
 import SpeechModal from '../../components/Modals/SpeechModal';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useBound } from '../../contexts/useBound';
+import { getBound } from '../../services/boundAPI';
 const cx = classNames.bind(styles);
 function Dashboard() {
+    const boundContext = useBound();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await Promise.all([
+                    getBound({ name: 'humidity-sensor' }),
+                    getBound({ name: 'temp-sensor' }),
+                    getBound({ name: 'lighting-sensor' }),
+                ]);
+                boundContext.setBoundHumid(res[0].data);
+                boundContext.setBoundTemp(res[1].data);
+                boundContext.setLighting(res[2].data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+        // eslint-disable-next-line
+    }, [boundContext.renderBound]);
+
     //SENSOR
     const [temp, setTemp] = useState(0);
     const [light, setLight] = useState(0);
     const [humid, setHumid] = useState(0);
 
+    //MODE
+    const [mode, setMode] = useState('manual');
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Gọi 3 API cùng một lúc bằng Axios
+                const [light1, light2, light3, light4] = await Promise.all([
+                    getDeviceStatus('feeds/light-1/data/last'),
+                    getDeviceStatus('feeds/light-2/data/last'),
+                    getDeviceStatus('feeds/light-3/data/last'),
+                    getDeviceStatus('feeds/light-4/data/last'),
+                ]);
+                setStatusLight1(light1.data.value);
+                setStatusLight2(light2.data.value);
+                setStatusLight3(light3.data.value);
+                setStatusLight4(light4.data.value);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+        if (mode === 'automatic') {
+            const intervalId = setInterval(fetchData, 5000);
+            return () => clearInterval(intervalId);
+        }
+    }, [mode]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
                 const [temperatureResponse, humidityResponse, lightResponse] = await Promise.all([
                     getDeviceStatus('feeds/temp-sensor/data/last'),
                     getDeviceStatus('feeds/humidity-sensor/data/last'),
                     getDeviceStatus('feeds/lighting-sensor/data/last'),
                 ]);
-
-                // Lấy dữ liệu từ các API
-                console.log(Number(temperatureResponse.data.value));
-
-                // Lưu trữ dữ liệu vào state
                 setTemp(Number(temperatureResponse.data.value));
                 setHumid(Number(humidityResponse.data.value));
                 setLight(Number(lightResponse.data.value));
@@ -38,14 +80,8 @@ function Dashboard() {
                 console.error('Error fetching weather data:', error);
             }
         };
-
-        // Gọi API lần đầu tiên khi component được mount
         fetchData();
-
-        // Thiết lập interval để gọi API sau mỗi 30 giây
-        const intervalId = setInterval(fetchData, 10000);
-
-        // Cleanup để tránh memory leaks
+        const intervalId = setInterval(fetchData, 5000);
         return () => clearInterval(intervalId);
     }, []);
     const navigate = useNavigate();
@@ -60,7 +96,6 @@ function Dashboard() {
     const [statusLight1, setStatusLight1] = useState('0');
     const [mode1, setMode1] = useState('manual');
     const [loading, setLoading] = useState(false);
-    //const [renderLight1, setRenderLight1] = useState(true);
 
     const handleChangeStatusLight1 = (data) => {
         if (loading) return;
@@ -69,7 +104,6 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-1/data', { value: data });
                 setLoading(false);
-                //setRenderLight1(!renderLight1);
                 setStatusLight1(statusLight1 === '1' ? '0' : '1');
             };
             callAPI();
@@ -82,7 +116,6 @@ function Dashboard() {
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState('0');
     const [mode2, setMode2] = useState('manual');
-    //const [renderLight2, setRenderLight2] = useState(true);
 
     const handleChangeStatusLight2 = (data) => {
         if (loading) return;
@@ -91,7 +124,6 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-2/data', { value: data });
                 setLoading(false);
-                //setRenderLight2(!renderLight2);
                 setStatusLight2(statusLight2 === '1' ? '0' : '1');
             };
             callAPI();
@@ -100,28 +132,9 @@ function Dashboard() {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        setLoading(true);
-        try {
-            const callAPI = async () => {
-                const response = await getDeviceStatus('feeds/light-2/data/last');
-                //console.log(response);
-                setStatusLight2(response.data.value);
-                setLoading(false);
-            };
-            callAPI();
-        } catch (err) {
-            console.log(err);
-            setLoading(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     //LIGHT 3
     const [statusLight3, setStatusLight3] = useState('0');
     const [mode3, setMode3] = useState('manual');
-    //const [renderLight3, setRenderLight3] = useState(true);
 
     const handleChangeStatusLight3 = (data) => {
         if (loading) return;
@@ -130,7 +143,6 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-3/data', { value: data });
                 setLoading(false);
-                //setRenderLight3(!renderLight3);
                 setStatusLight3(statusLight3 === '1' ? '0' : '1');
             };
             callAPI();
@@ -140,26 +152,9 @@ function Dashboard() {
         }
     };
 
-    useEffect(() => {
-        setLoading(true);
-        try {
-            const callAPI = async () => {
-                const response = await getDeviceStatus('feeds/light-3/data/last');
-                setStatusLight3(response.data.value);
-                setLoading(false);
-            };
-            callAPI();
-        } catch (err) {
-            console.log(err);
-            setLoading(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     //LIGHT 4
     const [statusLight4, setStatusLight4] = useState('0');
     const [mode4, setMode4] = useState('manual');
-    //const [renderLight4, setRenderLight4] = useState(true);
 
     const handleChangeStatusLight4 = (data) => {
         if (loading) return;
@@ -168,7 +163,6 @@ function Dashboard() {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/light-4/data', { value: data });
                 setLoading(false);
-                //setRenderLight4(!renderLight4);
                 setStatusLight4(statusLight4 === '1' ? '0' : '1');
             };
             callAPI();
@@ -178,22 +172,6 @@ function Dashboard() {
         }
     };
 
-    useEffect(() => {
-        setLoading(true);
-        try {
-            const callAPI = async () => {
-                const response = await getDeviceStatus('feeds/light-4/data/last');
-                setStatusLight4(response.data.value);
-                setLoading(false);
-            };
-            callAPI();
-        } catch (err) {
-            console.log(err);
-            setLoading(false);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     //FAN
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
@@ -202,15 +180,12 @@ function Dashboard() {
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (loading || debounced === '') {
-            console.log('Please wait........');
         } else if (isFirstRender.current) {
             isFirstRender.current = false;
-            console.log('First render not call.........');
         } else {
             setLoading(true);
             try {
                 const callAPI = async () => {
-                    console.log(fanSpeed);
                     await postDeviceStatus('feeds/fan/data', { value: fanSpeed });
                     setLoading(false);
                     setRenderFan(!renderFan);
@@ -244,7 +219,6 @@ function Dashboard() {
         try {
             const callAPI = async () => {
                 const response = await getDeviceStatus('feeds/fan/data/last');
-                // console.log(response.data.value);
                 setFanSpeed(Number(response.data.value));
                 setLoading(false);
             };
@@ -270,7 +244,7 @@ function Dashboard() {
             )}
         >
             <>
-                <div className="flex items-center lg:gap-[100px] md:gap-[50px] gap-[20px] mb-[28px]">
+                <div className="flex items-center lg:gap-[100px] md:gap-[50px] gap-[20px] mb-[18px]">
                     <p className={cx('text-[28px] font-bold')}>Bảng điều khiển</p>
                     <div className="mic flex items-center justify-center h-[56px] w-[56px] rounded-[50%] bg-[#f1f3f4]">
                         <div className="cursor-pointer" onClick={handleMicClick}>
@@ -293,15 +267,15 @@ function Dashboard() {
                     </div>
                 </div>
                 <div>
-                    <p className={cx('text-[20px] font-bold mb-[28px]')}>Living Room</p>
-                    <div className="flex flex-col md:flex-row flex-wrap mb-[28px]">
+                    <p className={cx('text-[20px] font-bold mb-[10px]')}>Living Room</p>
+                    <div className="flex flex-col md:flex-row flex-wrap">
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                             <SensorItem
                                 sensorType="Lighting"
                                 sensorValue={light}
                                 sensorUnit="%"
-                                upperThreshold={100}
-                                lowerThreshold={0}
+                                upperThreshold={boundContext.boundLighting.high}
+                                lowerThreshold={boundContext.boundLighting.low}
                             />
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
@@ -309,8 +283,8 @@ function Dashboard() {
                                 sensorType="Humidity"
                                 sensorValue={humid}
                                 sensorUnit="%"
-                                upperThreshold={100}
-                                lowerThreshold={50}
+                                upperThreshold={boundContext.boundHumid.high}
+                                lowerThreshold={boundContext.boundHumid.low}
                             />
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
@@ -318,12 +292,12 @@ function Dashboard() {
                                 sensorType="Temperature"
                                 sensorValue={temp}
                                 sensorUnit="°C"
-                                upperThreshold={36}
-                                lowerThreshold={14}
+                                upperThreshold={boundContext.boundTemp.high}
+                                lowerThreshold={boundContext.boundTemp.low}
                             />
                         </div>
                     </div>
-                    <div className="flex flex-col md:flex-row flex-wrap mb-[28px] md:gap-[28px] gap-[10px]">
+                    <div className="flex flex-col md:flex-row flex-wrap mb-[28px] md:gap-[16px] gap-[10px]">
                         <DeviceItem
                             deviceType="light"
                             deviceName="Light 1"

@@ -5,14 +5,20 @@ import reportWebVitals from './reportWebVitals';
 import GlobalStyles from './components/GlobalStyles';
 import { AuthProvider } from './contexts/useAuth';
 import { ProfileProvider } from './contexts/useProfile';
+import { NotifyProvider } from './contexts/useNotify';
+import { BoundProvider } from './contexts/useBound';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <AuthProvider>
             <ProfileProvider>
-                <GlobalStyles>
-                    <App />
-                </GlobalStyles>
+                <NotifyProvider>
+                    <BoundProvider>
+                        <GlobalStyles>
+                            <App />
+                        </GlobalStyles>
+                    </BoundProvider>
+                </NotifyProvider>
             </ProfileProvider>
         </AuthProvider>
     </React.StrictMode>,

@@ -2,41 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NotifyItem from './NotifyItem';
 import { useAuth } from '../../contexts/useAuth';
-const notifyData = [
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: true,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: true,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: true,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: true,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: true,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: false,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: false,
-    },
-    {
-        content: 'Nhiệt độ phòng khách vượt ngưỡng bình thường, giá trị 33,5 độ C tại thời điểm 11/3/2024 15:30 ',
-        isRead: false,
-    },
-];
+import { useNotify } from '../../contexts/useNotify';
+import { readAllNotify } from '../../services/notificationAPI';
+import { toast } from '../../utils/toastify';
 function Notification() {
+    const notifyContext = useNotify();
     const [tab, setTab] = useState(1);
     const navigate = useNavigate();
     const authContext = useAuth();
@@ -45,6 +15,19 @@ function Notification() {
             navigate('/login');
         }
     }, [authContext.auth, navigate]);
+
+    const handleReadAll = () => {
+        const fetchData = async () => {
+            try {
+                await readAllNotify();
+                toast.success('Đã đọc toàn bộ thông báo');
+                notifyContext.reRender();
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    };
     return (
         <div className="mt-[65px] md:ml-[70px] lg:px-[75px] md:px-[40px] px-[16px] py-[24px] min-h-[800px]">
             <h2 className="text-[28px] font-bold mb-[28px]">Thông báo</h2>
@@ -77,14 +60,67 @@ function Notification() {
                     </div>
                 </div>
             </div>
-            <div className="mt-[28px] inline-block cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] bg-[#2396EF] text-black">
+            <div
+                onClick={handleReadAll}
+                className="mt-[28px] inline-block cursor-pointer px-[20px] py-[12px] font-semibold rounded-[10px] bg-[#2396EF] text-black"
+            >
                 Đánh dấu đã đọc
             </div>
-            <div className="mt-[28px]">
-                {notifyData.map((item, index) => (
-                    <NotifyItem key={index} content={item.content} isRead={item.isRead} />
-                ))}
-            </div>
+            {tab === 1 ? (
+                <div className="mt-[28px]">
+                    {notifyContext.notification.map((item, index) => (
+                        <NotifyItem
+                            key={index}
+                            id={item._id}
+                            name={item.name}
+                            value={item.value}
+                            time={item.time}
+                            type={item.type}
+                            flag={item.flag}
+                        />
+                    ))}
+                </div>
+            ) : (
+                <></>
+            )}
+            {tab === 2 ? (
+                <div className="mt-[28px]">
+                    {notifyContext.notification
+                        .filter((obj) => obj.type === 'Vượt ngưỡng' || obj.type === 'Dưới ngưỡng')
+                        .map((item, index) => (
+                            <NotifyItem
+                                key={index}
+                                id={item._id}
+                                name={item.name}
+                                value={item.value}
+                                time={item.time}
+                                type={item.type}
+                                flag={item.flag}
+                            />
+                        ))}
+                </div>
+            ) : (
+                <></>
+            )}
+            {tab === 3 ? (
+                <div className="mt-[28px]">
+                    {notifyContext.notification
+                        .filter((obj) => obj.type === 'Phát hiện người')
+                        .map((item, index) => (
+                            <NotifyItem
+                                key={index}
+                                id={item._id}
+                                name={item.name}
+                                value={item.value}
+                                time={item.time}
+                                type={item.type}
+                                flag={item.flag}
+                            />
+                        ))}
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 }
