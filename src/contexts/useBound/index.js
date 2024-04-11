@@ -7,9 +7,9 @@ export const useBound = () => {
 };
 
 export const BoundProvider = ({ children }) => {
-    const [boundHumid, setBoundHumid] = useState({});
-    const [boundTemp, setBoundTemp] = useState({});
-    const [boundLighting, setLighting] = useState({});
+    const [boundHumid, setBoundHumid] = useState({ high: 0, low: 0 });
+    const [boundTemp, setBoundTemp] = useState({ high: 0, low: 0 });
+    const [boundLighting, setLighting] = useState({ high: 0, low: 0 });
     const [renderBound, setRenderBound] = useState(false);
     const reRender = () => {
         setRenderBound(!renderBound);
