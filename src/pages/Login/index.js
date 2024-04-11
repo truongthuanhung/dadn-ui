@@ -53,7 +53,6 @@ function Login() {
             return;
         } else {
             const response = await registerAPI({ username: newEmail, name, password: newPassword });
-            console.log(response);
             if (response.data) {
                 toast.success('Account is successfully created');
                 setEmail('');

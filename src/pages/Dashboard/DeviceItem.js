@@ -18,12 +18,12 @@ function DeviceItem({
     if (deviceType === 'door') Icon = DoorIcon;
     return (
         <div
-            className={`flex flex-row items-center justify-between rounded-[20px] w-full lg:px-[32px] md:px-[12px] px-[24px] py-[10px] ${
+            className={`flex flex-row items-center justify-between rounded-[20px] w-full lg:px-[32px] md:px-[12px] px-[24px] md:py-[6px] py-[10px] ${
                 deviceStatus === '1' ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
             }`}
         >
             <div className="flex flex-col md:flex-row md:items-center justify-between lg:gap-[48px] gap-[18px]">
-                <div className="w-[56px] h-[56px] rounded-[10px] bg-[#2892F0] flex justify-center items-center">
+                <div className="w-[44px] h-[44px] rounded-[10px] bg-[#2892F0] flex justify-center items-center">
                     <Icon />
                 </div>
                 <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] min-w-[76px]">{deviceName}</p>
@@ -46,7 +46,7 @@ function DeviceItem({
                     </div>
                 ) : (
                     <div className="flex flex-row items-center justify-end gap-[18px]">
-                        <p className="font-bold text-[#1a1a1a] text-[16px] min-w-[58px]">
+                        <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] min-w-[58px]">
                             {deviceType !== 'door' && (deviceStatus === '1' ? 'On' : 'Off')}
                             {deviceType === 'door' && (deviceStatus === '1' ? 'Opened' : 'Closed')}
                         </p>

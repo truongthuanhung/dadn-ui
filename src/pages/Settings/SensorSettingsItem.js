@@ -10,13 +10,13 @@ function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
         SensorIcon = HumidIcon;
         sensorName = 'Cảm biến độ ẩm';
     }
-    const handleInputChange = (index, value) => {
-        const newData = [...data];
-        newData[index] = value;
+    const handleInputChange = (key, value) => {
+        const newData = data;
+        newData[key] = value;
         onChange(newData);
     };
     return (
-        <div className="w-[295px] h-[496px] lg:w-[500px] lg:h-[433px] bg-[#f2f2f2] px-[24px] py-[28px] rounded-[20px]">
+        <div className="w-[295px] lg:w-[500px] bg-[#f2f2f2] px-[24px] py-[28px] rounded-[20px]">
             <div className="flex items-center lg:gap-[90px] gap-[16px]">
                 <div className="w-[44px] h-[44px] bg-[#2892F0] rounded-[10px] flex items-center justify-center">
                     <SensorIcon />
@@ -24,14 +24,13 @@ function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
                 <p className="font-semibold text-[18px]">{sensorName}</p>
             </div>
             <div className="mt-[20px]">
-                <p className="font-semibold text-[18px]">Ban ngày</p>
                 <div className="flex justify-between items-center gap-[24px] mt-[14px]">
                     <div className="flex flex-col gap-[8px]">
                         <p className="font-semibold">Ngưỡng dưới</p>
                         <input
-                            type="text"
+                            type="number"
                             value={data[0]}
-                            onChange={(e) => handleInputChange(0, e.target.value)}
+                            onChange={(e) => handleInputChange('low', e.target.value)}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             required
                         />
@@ -39,34 +38,9 @@ function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
                     <div className="flex flex-col gap-[8px]">
                         <p className="font-semibold">Ngưỡng trên</p>
                         <input
-                            type="text"
+                            type="number"
                             value={data[1]}
-                            onChange={(e) => handleInputChange(1, e.target.value)}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            required
-                        />
-                    </div>
-                </div>
-            </div>
-            <div className="mt-[20px]">
-                <p className="font-semibold text-[18px]">Ban đêm</p>
-                <div className="flex justify-between items-center gap-[24px] mt-[14px]">
-                    <div className="flex flex-col gap-[8px]">
-                        <p className="font-semibold">Ngưỡng dưới</p>
-                        <input
-                            type="text"
-                            value={data[2]}
-                            onChange={(e) => handleInputChange(2, e.target.value)}
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            required
-                        />
-                    </div>
-                    <div className="flex flex-col gap-[8px]">
-                        <p className="font-semibold">Ngưỡng trên</p>
-                        <input
-                            type="text"
-                            value={data[3]}
-                            onChange={(e) => handleInputChange(3, e.target.value)}
+                            onChange={(e) => handleInputChange('high', e.target.value)}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             required
                         />
