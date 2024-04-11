@@ -10,8 +10,30 @@ import { MicIcon } from '../../components/Icons/Icons';
 import SpeechModal from '../../components/Modals/SpeechModal';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useBound } from '../../contexts/useBound';
+import { getBound } from '../../services/boundAPI';
 const cx = classNames.bind(styles);
 function Dashboard() {
+    const boundContext = useBound();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await Promise.all([
+                    getBound({ name: 'humidity-sensor' }),
+                    getBound({ name: 'temp-sensor' }),
+                    getBound({ name: 'lighting-sensor' }),
+                ]);
+                boundContext.setBoundHumid(res[0].data);
+                boundContext.setBoundTemp(res[1].data);
+                boundContext.setLighting(res[2].data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+        // eslint-disable-next-line
+    }, [boundContext.renderBound]);
+
     //SENSOR
     const [temp, setTemp] = useState(0);
     const [light, setLight] = useState(0);
@@ -51,7 +73,6 @@ function Dashboard() {
                     getDeviceStatus('feeds/humidity-sensor/data/last'),
                     getDeviceStatus('feeds/lighting-sensor/data/last'),
                 ]);
-                console.log(1);
                 setTemp(Number(temperatureResponse.data.value));
                 setHumid(Number(humidityResponse.data.value));
                 setLight(Number(lightResponse.data.value));
@@ -165,7 +186,6 @@ function Dashboard() {
             setLoading(true);
             try {
                 const callAPI = async () => {
-                    console.log(fanSpeed);
                     await postDeviceStatus('feeds/fan/data', { value: fanSpeed });
                     setLoading(false);
                     setRenderFan(!renderFan);
@@ -254,8 +274,8 @@ function Dashboard() {
                                 sensorType="Lighting"
                                 sensorValue={light}
                                 sensorUnit="%"
-                                upperThreshold={100}
-                                lowerThreshold={0}
+                                upperThreshold={boundContext.boundLighting.high}
+                                lowerThreshold={boundContext.boundLighting.low}
                             />
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
@@ -263,8 +283,8 @@ function Dashboard() {
                                 sensorType="Humidity"
                                 sensorValue={humid}
                                 sensorUnit="%"
-                                upperThreshold={100}
-                                lowerThreshold={50}
+                                upperThreshold={boundContext.boundHumid.high}
+                                lowerThreshold={boundContext.boundHumid.low}
                             />
                         </div>
                         <div className="w-full md:w-1/2 lg:w-1/3 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
@@ -272,8 +292,8 @@ function Dashboard() {
                                 sensorType="Temperature"
                                 sensorValue={temp}
                                 sensorUnit="°C"
-                                upperThreshold={36}
-                                lowerThreshold={14}
+                                upperThreshold={boundContext.boundTemp.high}
+                                lowerThreshold={boundContext.boundTemp.low}
                             />
                         </div>
                     </div>

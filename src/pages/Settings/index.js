@@ -1,41 +1,71 @@
 import SensorSettingsItem from './SensorSettingsItem';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
-const dummyData = {
-    tempData: [20, 36, 14, 31],
-    humidData: [100, 200, 150, 250],
-    lightData: [100, 300, 0, 100],
-};
+import { useBound } from '../../contexts/useBound';
+import { getBound, changeBound } from '../../services/boundAPI';
 function Settings() {
     const navigate = useNavigate();
     const authContext = useAuth();
+
+    const boundContext = useBound();
+    console.log(boundContext);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await Promise.all([
+                    getBound({ name: 'humidity-sensor' }),
+                    getBound({ name: 'temp-sensor' }),
+                    getBound({ name: 'lighting-sensor' }),
+                ]);
+                console.log(res);
+                boundContext.setBoundHumid(res[0].data);
+                boundContext.setBoundTemp(res[1].data);
+                boundContext.setLighting(res[2].data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+        // eslint-disable-next-line
+    }, [boundContext.renderBound]);
     useEffect(() => {
         if (!authContext.auth) {
             navigate('/login');
         }
     }, [authContext.auth, navigate]);
-    const [tempSensorData, setTempSensorData] = useState(dummyData.tempData);
-    const [humidSensorData, setHumidSensorData] = useState(dummyData.humidData);
-    const [lightSensorData, setLightSensorData] = useState(dummyData.lightData);
+    const handleTempSensorSave = async () => {
+        await changeBound({ name: 'temp-sensor', low: boundContext.boundTemp.low, high: boundContext.boundTemp.high });
+        boundContext.reRender();
+    };
+    const handleHumidSensorSave = async () => {
+        await changeBound({
+            name: 'humidity-sensor',
+            low: boundContext.boundHumid.low,
+            high: boundContext.boundHumid.high,
+        });
+        boundContext.reRender();
+    };
+    const handleLightSensorSave = async () => {
+        await changeBound({
+            name: 'lighting-sensor',
+            low: boundContext.boundLighting.low,
+            high: boundContext.boundLighting.high,
+        });
+        boundContext.reRender();
+    };
+    const handleCancel = () => {
+        boundContext.reRender();
+    };
+
     const handleTempSensorChange = (newData) => {
-        setTempSensorData(newData);
+        //setTempSensorData(newData);
     };
     const handleHumidSensorChange = (newData) => {
-        setHumidSensorData(newData);
+        //setHumidSensorData(newData);
     };
     const handleLightSensorChange = (newData) => {
-        setLightSensorData(newData);
-    };
-    const handleCancelTemp = () => {
-        setTempSensorData(dummyData.tempData);
-        setLightSensorData(dummyData.lightData);
-    };
-    const handleCancelHumid = () => {
-        setHumidSensorData(dummyData.humidData);
-    };
-    const handleCancelLight = () => {
-        setLightSensorData(dummyData.lightData);
+        //setLightSensorData(newData);
     };
     return (
         <div className="mt-[65px] md:ml-[70px] lg:px-[75px] lg:pr-0 md:px-[40px] px-[16px] py-[24px]">
@@ -44,25 +74,28 @@ function Settings() {
                 <div className="w-full md:w-1/2 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                     <SensorSettingsItem
                         sensorType="temperature"
-                        data={tempSensorData}
+                        data={[boundContext.boundTemp.low, boundContext.boundTemp.high]}
+                        onSave={handleTempSensorSave}
                         onChange={handleTempSensorChange}
-                        onCancel={handleCancelTemp}
+                        onCancel={handleCancel}
                     />
                 </div>
                 <div className="w-full md:w-1/2 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                     <SensorSettingsItem
                         sensorType="humidity"
-                        data={humidSensorData}
+                        data={[boundContext.boundHumid.low, boundContext.boundHumid.high]}
+                        onSave={handleHumidSensorSave}
                         onChange={handleHumidSensorChange}
-                        onCancel={handleCancelHumid}
+                        onCancel={handleCancel}
                     />
                 </div>
                 <div className="w-full md:w-1/2 lg:pb-[28px] pb-[18px] flex items-center justify-center md:justify-start">
                     <SensorSettingsItem
                         sensorType="lighting"
-                        data={lightSensorData}
+                        data={[boundContext.boundLighting.low, boundContext.boundLighting.high]}
+                        onSave={handleLightSensorSave}
                         onChange={handleLightSensorChange}
-                        onCancel={handleCancelLight}
+                        onCancel={handleCancel}
                     />
                 </div>
             </div>
