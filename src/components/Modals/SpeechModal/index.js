@@ -17,24 +17,24 @@ function SpeechModal({
 }) {
     const handleStopListening = () => {
         stopListening();
-        if (content.includes('on') && content.includes('light')) {
+        if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn')) {
             turnOnLight(setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose);
-        } else if (content.includes('off') && content.includes('light')) {
+        } else if (content.includes('tắt') && content.includes('đèn')) {
             turnOffLight(setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose);
-        } else if (content.includes('maximum') && content.includes('fan')) {
+        } else if (content.includes('tối đa') && content.includes('quạt')) {
             fanControl(100, setFanSpeed, handleClose);
-        } else if (content.includes('medium') && content.includes('fan')) {
+        } else if (content.includes('trung bình') && content.includes('quạt')) {
             fanControl(50, setFanSpeed, handleClose);
-        } else if (content.includes('off') && content.includes('fan')) {
+        } else if (content.includes('tắt') && content.includes('quạt')) {
             fanControl(0, setFanSpeed, handleClose);
-        } else if (content.includes('on') && content.includes('fan')) {
+        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('quạt')) {
             fanControl(100, setFanSpeed, handleClose);
         } else {
             handleClose();
             toast.error('Yêu cầu không hợp lệ');
         }
     };
-    const debounced = useDebounce(content, 1500);
+    const debounced = useDebounce(content, 1000);
     useEffect(() => {
         if (content !== '' && !listening) handleStopListening();
         // eslint-disable-next-line react-hooks/exhaustive-deps
