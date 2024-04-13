@@ -5,6 +5,8 @@ import { useAuth } from './contexts/useAuth';
 import { getAllNotifications } from './services/notificationAPI';
 import React, { useEffect } from 'react';
 import { useNotify } from './contexts/useNotify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
     const notifyContext = useNotify();
     const authContext = useAuth();
@@ -52,6 +54,7 @@ function App() {
                         );
                     })}
                 </Routes>
+                <ToastContainer autoClose={2500}/>
             </div>
         </Router>
     );

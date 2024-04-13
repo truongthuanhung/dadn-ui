@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BingMicIcon, CloseIcon } from '../../Icons/Icons';
-import { toast } from '../../../utils/toastify';
+import { toast } from 'react-toastify';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { turnOffLight, turnOnLight, fanControl } from '../../../utils/voiceControl';
 function SpeechModal({

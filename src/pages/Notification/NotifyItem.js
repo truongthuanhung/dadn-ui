@@ -3,7 +3,7 @@ import { CheckedIcon } from '../../components/Icons/Icons';
 import { convertTime, roundTime } from '../../utils/time';
 import { readNotify } from '../../services/notificationAPI';
 import { useNotify } from '../../contexts/useNotify';
-import { toast } from '../../utils/toastify';
+import { toast } from 'react-toastify';
 function NotifyItem({ flag, name, time, type, value, id }) {
     const notifyContext = useNotify();
 

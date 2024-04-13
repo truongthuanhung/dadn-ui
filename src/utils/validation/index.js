@@ -1,4 +1,4 @@
-import { toast } from '../toastify';
+import { toast } from 'react-toastify';
 export const loginValidation = (username, password) => {
     if (username === '') {
         toast.error('Username không được để trống');
