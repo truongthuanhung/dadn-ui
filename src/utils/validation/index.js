@@ -1,4 +1,4 @@
-import { toast } from '../toastify';
+import { toast } from 'react-toastify';
 export const loginValidation = (username, password) => {
     if (username === '') {
         toast.error('Username không được để trống');
@@ -49,15 +49,3 @@ export const changePassword = (password, newPassword, confirmPassword) => {
     }
     return true;
 };
-
-export const sensorValidation = (low, high) => {
-    if (low < 0 || high < 0 || low > 100 || high > 100) {
-        toast.error('Vui lòng nhập giá trị từ 0 đến 100');
-        return false;
-    }
-    else if (low >= high) {
-        toast.error('Vui lòng nhập ngưỡng trên cao hơn ngưỡng dưới');
-        return false;
-    }
-    return true;
-}

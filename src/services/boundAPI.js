@@ -1,5 +1,5 @@
 import systemAPI from './systemService';
-import { toast } from '../utils/toastify';
+import { toast } from 'react-toastify';
 const path = '/sensors/bound';
 
 export const getBound = async (data) => {

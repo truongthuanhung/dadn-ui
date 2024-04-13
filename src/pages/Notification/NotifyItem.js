@@ -3,7 +3,7 @@ import { CheckedIcon } from '../../components/Icons/Icons';
 import { convertTime, roundTime } from '../../utils/time';
 import { readNotify } from '../../services/notificationAPI';
 import { useNotify } from '../../contexts/useNotify';
-import { toast } from '../../utils/toastify';
+import { toast } from 'react-toastify';
 function NotifyItem({ flag, name, time, type, value, id }) {
     const notifyContext = useNotify();
 
@@ -43,9 +43,9 @@ function NotifyItem({ flag, name, time, type, value, id }) {
             }`}
         >
             <img src={Landing} alt="" className="block w-[56px] h-[56px] object-cover rounded-[50%]" />
-            <div className="flex flex-col lg:flex-row lg:items-center">
+            <div className="flex flex-col lg:flex-row lg:items-center flex-1">
                 <p
-                    className={`font-semibold text-[12px] md:text-[14px] lg:text-[16px] lg:ml-[46px] lg:min-w-[920px] lg:px-0 px-[12px] text-justify ${
+                    className={`font-semibold text-[12px] md:text-[14px] lg:text-[16px] lg:ml-[46px] lg:w-[920px] w-full lg:px-0 px-[12px] text-justify ${
                         !flag ? 'text-black' : 'text-[#65676B]'
                     }`}
                 >

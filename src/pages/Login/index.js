@@ -5,8 +5,8 @@ import { useAuth } from '../../contexts/useAuth';
 import { loginAPI, registerAPI } from '../../services/loginAPI';
 import { userInfoAPI } from '../../services/userInfoAPI';
 import { useProfile } from '../../contexts/useProfile';
-import { toast } from '../../utils/toastify';
 import { loginValidation, registerValidation } from '../../utils/validation';
+import { toast } from 'react-toastify';
 function Login() {
     const navigate = useNavigate();
     let { state } = useLocation();
@@ -54,7 +54,7 @@ function Login() {
         } else {
             const response = await registerAPI({ username: newEmail, name, password: newPassword });
             if (response.data) {
-                toast.success('Account is successfully created');
+                //toast.success('Account is successfully created');
                 setEmail('');
                 setPassword('');
                 setTab('login');
@@ -63,7 +63,7 @@ function Login() {
                 setNewPassword('');
                 setConfirmPassword('');
             } else {
-                toast.error('Username is existed');
+                //toast.error('Username is existed');
             }
         }
     };

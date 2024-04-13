@@ -1,5 +1,5 @@
 import { postDeviceStatus } from '../../services/deviceService';
-import { toast } from '../toastify';
+import { toast } from 'react-toastify';
 export const turnOnLight = async (setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose) => {
     try {
         handleClose();

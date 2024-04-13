@@ -4,7 +4,7 @@ import NotifyItem from './NotifyItem';
 import { useAuth } from '../../contexts/useAuth';
 import { useNotify } from '../../contexts/useNotify';
 import { readAllNotify } from '../../services/notificationAPI';
-import { toast } from '../../utils/toastify';
+import { toast } from 'react-toastify';
 function Notification() {
     const notifyContext = useNotify();
     const [tab, setTab] = useState(1);

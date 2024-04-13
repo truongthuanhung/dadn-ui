@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { changePassword } from '../../utils/validation';
 import { changePasswordAPI } from '../../services/changePassword';
-import { toast } from '../../utils/toastify';
+import { toast } from 'react-toastify';
 function Profile() {
     const [tab, setTab] = useState('view');
     const [name, setName] = useState(sessionStorage.getItem('name'));
