@@ -8,12 +8,14 @@ import { useAuth } from '../../contexts/useAuth';
 import { getDeviceStatus, postDeviceStatus } from '../../services/deviceService';
 import { MicIcon } from '../../components/Icons/Icons';
 import SpeechModal from '../../components/Modals/SpeechModal';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useBound } from '../../contexts/useBound';
 import { getBound } from '../../services/boundAPI';
+import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts'
 const cx = classNames.bind(styles);
 function Dashboard() {
+    const {text, isListening, startListening, stopListening} = useSpeechRecognition();
+
     const boundContext = useBound();
     useEffect(() => {
         const fetchData = async () => {
@@ -230,11 +232,10 @@ function Dashboard() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [renderFan]);
 
-    const { transcript, listening } = useSpeechRecognition();
     const [showModal, setShowModal] = useState(false);
     const handleMicClick = () => {
         setShowModal(true);
-        SpeechRecognition.startListening();
+        startListening();
     };
     return (
         <div
@@ -252,16 +253,16 @@ function Dashboard() {
                         </div>
                         {showModal && (
                             <SpeechModal
-                                content={transcript}
+                                content={text}
                                 handleClose={() => setShowModal(false)}
-                                stopListening={SpeechRecognition.stopListening}
+                                stopListening={stopListening}
                                 setStatusLight1={(data) => setStatusLight1(data)}
                                 setStatusLight2={(data) => setStatusLight2(data)}
                                 setStatusLight3={(data) => setStatusLight3(data)}
                                 setStatusLight4={(data) => setStatusLight4(data)}
                                 fanSpeed={fanSpeed}
                                 setFanSpeed={(data) => setFanSpeed(data)}
-                                listening={listening}
+                                listening={isListening}
                             />
                         )}
                     </div>

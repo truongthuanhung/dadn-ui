@@ -1,5 +1,5 @@
 import { TempIcon, HumidIcon, LightIcon } from '../../components/Icons/Icons';
-function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
+function SensorSettingsItem({ sensorType, low, high, onChange, onCancel, onSave }) {
     let SensorIcon = TempIcon;
     let sensorName = 'Cảm biến nhiệt độ';
     if (sensorType === 'lighting') {
@@ -10,10 +10,11 @@ function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
         SensorIcon = HumidIcon;
         sensorName = 'Cảm biến độ ẩm';
     }
-    const handleInputChange = (key, value) => {
-        const newData = data;
-        newData[key] = value;
-        onChange(newData);
+    const handleChangeLow = (e) => {
+        onChange({ low: e.target.value, high: high });
+    };
+    const handleChangeHigh = (e) => {
+        onChange({ low: low, high: e.target.value });
     };
     return (
         <div className="w-[295px] lg:w-[500px] bg-[#f2f2f2] px-[24px] py-[28px] rounded-[20px]">
@@ -29,8 +30,8 @@ function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
                         <p className="font-semibold">Ngưỡng dưới</p>
                         <input
                             type="number"
-                            value={data[0]}
-                            onChange={(e) => handleInputChange('low', e.target.value)}
+                            value={low}
+                            onChange={handleChangeLow}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             required
                         />
@@ -39,8 +40,8 @@ function SensorSettingsItem({ sensorType, data, onChange, onCancel, onSave }) {
                         <p className="font-semibold">Ngưỡng trên</p>
                         <input
                             type="number"
-                            value={data[1]}
-                            onChange={(e) => handleInputChange('high', e.target.value)}
+                            value={high}
+                            onChange={handleChangeHigh}
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             required
                         />
