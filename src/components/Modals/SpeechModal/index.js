@@ -10,8 +10,6 @@ function SpeechModal({
     stopListening,
     setStatusLight1,
     setStatusLight2,
-    setStatusLight3,
-    setStatusLight4,
     fanSpeed,
     setFanSpeed,
 }) {
@@ -21,22 +19,14 @@ function SpeechModal({
             setStatusLightID(1, setStatusLight1, handleClose, '1');
         } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 2')) {
             setStatusLightID(1, setStatusLight2, handleClose, '1');
-        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 3')) {
-            setStatusLightID(3, setStatusLight3, handleClose, '1');
-        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 4')) {
-            setStatusLightID(4, setStatusLight3, handleClose, '1');
         } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 1')) {
             setStatusLightID(1, setStatusLight1, handleClose, '0');
         } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 2')) {
             setStatusLightID(1, setStatusLight2, handleClose, '0');
-        } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 3')) {
-            setStatusLightID(3, setStatusLight3, handleClose, '0');
-        } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 4')) {
-            setStatusLightID(4, setStatusLight3, handleClose, '0');
         } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn')) {
-            turnOnLight(setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose);
+            turnOnLight(setStatusLight1, setStatusLight2, handleClose);
         } else if (content.includes('tắt') && content.includes('đèn')) {
-            turnOffLight(setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose);
+            turnOffLight(setStatusLight1, setStatusLight2, handleClose);
         } else if (content.includes('tối đa') && content.includes('quạt')) {
             fanControl(100, setFanSpeed, handleClose);
         } else if (content.includes('trung bình') && content.includes('quạt')) {
