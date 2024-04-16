@@ -11,10 +11,11 @@ import SpeechModal from '../../components/Modals/SpeechModal';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useBound } from '../../contexts/useBound';
 import { getBound } from '../../services/boundAPI';
-import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts'
+import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts';
+import { handleChangeMode } from '../../utils/handleChangeMode.js';
 const cx = classNames.bind(styles);
 function Dashboard() {
-    const {text, isListening, startListening, stopListening} = useSpeechRecognition();
+    const { text, isListening, startListening, stopListening } = useSpeechRecognition();
 
     const boundContext = useBound();
     useEffect(() => {
@@ -42,31 +43,86 @@ function Dashboard() {
     const [humid, setHumid] = useState(0);
 
     //MODE
-    const [mode, setMode] = useState('manual');
+    const changeMode = (light, fan, door) => {
+        const sendData = handleChangeMode(light, fan, door);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/mode/data', { value: sendData });
+                setLoading(false);
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [light1, light2, light3, light4] = await Promise.all([
+                const [light1, light2, light3, light4, door] = await Promise.all([
                     getDeviceStatus('feeds/light-1/data/last'),
                     getDeviceStatus('feeds/light-2/data/last'),
                     getDeviceStatus('feeds/light-3/data/last'),
                     getDeviceStatus('feeds/light-4/data/last'),
+                    getDeviceStatus('feeds/door/data/last'),
                 ]);
                 setStatusLight1(light1.data.value);
                 setStatusLight2(light2.data.value);
                 setStatusLight3(light3.data.value);
                 setStatusLight4(light4.data.value);
+                setStatusDoor(door.data.value);
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-        if (mode === 'automatic') {
-            const intervalId = setInterval(fetchData, 5000);
-            return () => clearInterval(intervalId);
-        }
-    }, [mode]);
+    }, []);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const mode = await getDeviceStatus('feeds/mode/data/last');
+                console.log(mode.data.value);
+                if (Number(mode.data.value) === 0) {
+                    setModeLight('manual');
+                    setModeFan('manual');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 1) {
+                    setModeLight('automatic');
+                    setModeFan('manual');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 2) {
+                    setModeLight('manual');
+                    setModeFan('automatic');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 3) {
+                    setModeLight('manual');
+                    setModeFan('manual');
+                    setModeDoor('automatic');
+                } else if (Number(mode.data.value) === 4) {
+                    setModeLight('automatic');
+                    setModeFan('automatic');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 5) {
+                    setModeLight('automatic');
+                    setModeFan('manual');
+                    setModeDoor('automatic');
+                } else if (Number(mode.data.value) === 6) {
+                    setModeLight('manual');
+                    setModeFan('automatic');
+                    setModeDoor('automatic');
+                } else if (Number(mode.data.value) === 7) {
+                    setModeLight('automatic');
+                    setModeFan('automatic');
+                    setModeDoor('automatic');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -96,7 +152,7 @@ function Dashboard() {
 
     //LIGHT 1
     const [statusLight1, setStatusLight1] = useState('0');
-    const [mode1, setMode1] = useState('manual');
+    const [modeLight, setModeLight] = useState('manual');
     const [loading, setLoading] = useState(false);
 
     const handleChangeStatusLight1 = (data) => {
@@ -117,7 +173,6 @@ function Dashboard() {
 
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState('0');
-    const [mode2, setMode2] = useState('manual');
 
     const handleChangeStatusLight2 = (data) => {
         if (loading) return;
@@ -136,7 +191,6 @@ function Dashboard() {
     };
     //LIGHT 3
     const [statusLight3, setStatusLight3] = useState('0');
-    const [mode3, setMode3] = useState('manual');
 
     const handleChangeStatusLight3 = (data) => {
         if (loading) return;
@@ -156,7 +210,6 @@ function Dashboard() {
 
     //LIGHT 4
     const [statusLight4, setStatusLight4] = useState('0');
-    const [mode4, setMode4] = useState('manual');
 
     const handleChangeStatusLight4 = (data) => {
         if (loading) return;
@@ -174,6 +227,24 @@ function Dashboard() {
         }
     };
 
+    //DOOR
+    const [statusDoor, setStatusDoor] = useState('0');
+    const [modeDoor, setModeDoor] = useState('manual');
+    const handleChangeDoorStatus = (data) => {
+        if (loading) return;
+        setLoading(true);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/door/data', { value: data });
+                setLoading(false);
+                setStatusDoor(statusDoor === '1' ? '0' : '1');
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
+    };
     //FAN
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
@@ -303,32 +374,44 @@ function Dashboard() {
                             deviceType="light"
                             deviceName="Light 1"
                             deviceStatus={statusLight1}
-                            deviceMode={mode1}
-                            changeDeviceMode={() => setMode1(mode1 === 'automatic' ? 'manual' : 'automatic')}
+                            deviceMode={modeLight}
+                            changeDeviceMode={() => {
+                                setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
+                            }}
                             toggleDeviceStatus={() => handleChangeStatusLight1(statusLight1 === '1' ? '0' : '1')}
                         />
                         <DeviceItem
                             deviceType="light"
                             deviceName="Light 2"
                             deviceStatus={statusLight2}
-                            deviceMode={mode2}
-                            changeDeviceMode={() => setMode2(mode2 === 'automatic' ? 'manual' : 'automatic')}
+                            deviceMode={modeLight}
+                            changeDeviceMode={() => {
+                                setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
+                            }}
                             toggleDeviceStatus={() => handleChangeStatusLight2(statusLight2 === '1' ? '0' : '1')}
                         />
                         <DeviceItem
                             deviceType="light"
                             deviceName="Light 3"
                             deviceStatus={statusLight3}
-                            deviceMode={mode3}
-                            changeDeviceMode={() => setMode3(mode3 === 'automatic' ? 'manual' : 'automatic')}
+                            deviceMode={modeLight}
+                            changeDeviceMode={() => {
+                                setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
+                            }}
                             toggleDeviceStatus={() => handleChangeStatusLight3(statusLight3 === '1' ? '0' : '1')}
                         />
                         <DeviceItem
                             deviceType="light"
                             deviceName="Light 4"
                             deviceStatus={statusLight4}
-                            deviceMode={mode4}
-                            changeDeviceMode={() => setMode4(mode4 === 'automatic' ? 'manual' : 'automatic')}
+                            deviceMode={modeLight}
+                            changeDeviceMode={() => {
+                                setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
+                            }}
                             toggleDeviceStatus={() => handleChangeStatusLight4(statusLight4 === '1' ? '0' : '1')}
                         />
                         <DeviceItem
@@ -337,10 +420,24 @@ function Dashboard() {
                             fanSpeed={fanSpeed === '' ? 0 : fanSpeed}
                             deviceMode={modeFan}
                             changeDeviceMode={() => {
-                                if (loading) return;
                                 setModeFan(modeFan === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight, modeFan === 'automatic' ? 'manual' : 'automatic', modeDoor);
                             }}
-                            setFanSpeed={(e) => setFanSpeed(Number(e.target.value))}
+                            setFanSpeed={(e) => {
+                                if (loading) return;
+                                setFanSpeed(Number(e.target.value))
+                            }}
+                        />
+                        <DeviceItem
+                            deviceType="door"
+                            deviceName="Door"
+                            deviceStatus={statusDoor}
+                            deviceMode={modeDoor}
+                            changeDeviceMode={() => {
+                                setModeDoor(modeDoor === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight, modeFan, modeDoor === 'automatic' ? 'manual' : 'automatic');
+                            }}
+                            toggleDeviceStatus={() => handleChangeDoorStatus(statusDoor === '1' ? '0' : '1')}
                         />
                     </div>
                 </div>
