@@ -48,6 +48,11 @@ function Dashboard() {
         try {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/mode/data', { value: sendData });
+                if (light === 'automatic' || fan === 'automatic' || door === 'automatic') {
+                    setModeAll('automatic');
+                } else {
+                    setModeAll('manual');
+                }
                 setLoading(false);
             };
             callAPI();
@@ -56,7 +61,7 @@ function Dashboard() {
             setLoading(false);
         }
     };
-
+    const [modeAll, setModeAll] = useState('manual');
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -72,50 +77,65 @@ function Dashboard() {
                 setStatusLight3(light3.data.value);
                 setStatusLight4(light4.data.value);
                 setStatusDoor(door.data.value);
+                console.log('fetch...')
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-    }, []);
+        let intervalId = null;
+        if (modeAll === 'automatic') {
+            intervalId = setInterval(fetchData, 3000);
+        }
+        if (intervalId) {
+            return () => clearInterval(intervalId);
+        }
+    }, [modeAll]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const mode = await getDeviceStatus('feeds/mode/data/last');
-                console.log(mode.data.value);
                 if (Number(mode.data.value) === 0) {
                     setModeLight('manual');
                     setModeFan('manual');
                     setModeDoor('manual');
+                    setModeAll('manual');
                 } else if (Number(mode.data.value) === 1) {
                     setModeLight('automatic');
                     setModeFan('manual');
                     setModeDoor('manual');
+                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 2) {
                     setModeLight('manual');
                     setModeFan('automatic');
                     setModeDoor('manual');
+                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 3) {
                     setModeLight('manual');
                     setModeFan('manual');
                     setModeDoor('automatic');
+                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 4) {
                     setModeLight('automatic');
                     setModeFan('automatic');
                     setModeDoor('manual');
+                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 5) {
                     setModeLight('automatic');
                     setModeFan('manual');
                     setModeDoor('automatic');
+                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 6) {
                     setModeLight('manual');
                     setModeFan('automatic');
                     setModeDoor('automatic');
+                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 7) {
                     setModeLight('automatic');
                     setModeFan('automatic');
                     setModeDoor('automatic');
+                    setModeAll('automatic');
                 }
             } catch (error) {
                 console.error(error);
@@ -379,7 +399,10 @@ function Dashboard() {
                                 setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
                             }}
-                            toggleDeviceStatus={() => handleChangeStatusLight1(statusLight1 === '1' ? '0' : '1')}
+                            toggleDeviceStatus={() => {
+                                if (loading || modeLight === 'automatic') return;
+                                handleChangeStatusLight1(statusLight1 === '1' ? '0' : '1');
+                            }}
                         />
                         <DeviceItem
                             deviceType="light"
@@ -390,7 +413,10 @@ function Dashboard() {
                                 setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
                             }}
-                            toggleDeviceStatus={() => handleChangeStatusLight2(statusLight2 === '1' ? '0' : '1')}
+                            toggleDeviceStatus={() => {
+                                if (loading || modeLight === 'automatic') return;
+                                handleChangeStatusLight2(statusLight2 === '1' ? '0' : '1');
+                            }}
                         />
                         <DeviceItem
                             deviceType="light"
@@ -401,7 +427,10 @@ function Dashboard() {
                                 setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
                             }}
-                            toggleDeviceStatus={() => handleChangeStatusLight3(statusLight3 === '1' ? '0' : '1')}
+                            toggleDeviceStatus={() => {
+                                if (loading || modeLight === 'automatic') return;
+                                handleChangeStatusLight3(statusLight3 === '1' ? '0' : '1');
+                            }}
                         />
                         <DeviceItem
                             deviceType="light"
@@ -412,7 +441,10 @@ function Dashboard() {
                                 setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
                             }}
-                            toggleDeviceStatus={() => handleChangeStatusLight4(statusLight4 === '1' ? '0' : '1')}
+                            toggleDeviceStatus={() => {
+                                if (loading || modeLight === 'automatic') return;
+                                handleChangeStatusLight4(statusLight4 === '1' ? '0' : '1');
+                            }}
                         />
                         <DeviceItem
                             deviceType="fan"
@@ -424,8 +456,8 @@ function Dashboard() {
                                 changeMode(modeLight, modeFan === 'automatic' ? 'manual' : 'automatic', modeDoor);
                             }}
                             setFanSpeed={(e) => {
-                                if (loading) return;
-                                setFanSpeed(Number(e.target.value))
+                                if (loading || modeFan === 'automatic') return;
+                                setFanSpeed(Number(e.target.value));
                             }}
                         />
                         <DeviceItem
@@ -437,7 +469,10 @@ function Dashboard() {
                                 setModeDoor(modeDoor === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight, modeFan, modeDoor === 'automatic' ? 'manual' : 'automatic');
                             }}
-                            toggleDeviceStatus={() => handleChangeDoorStatus(statusDoor === '1' ? '0' : '1')}
+                            toggleDeviceStatus={() => {
+                                if (loading || modeDoor === 'automatic') return;
+                                handleChangeDoorStatus(statusDoor === '1' ? '0' : '1');
+                            }}
                         />
                     </div>
                 </div>
