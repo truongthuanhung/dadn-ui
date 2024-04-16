@@ -21,6 +21,19 @@ export const turnOnLight = async (setStatusLight1, setStatusLight2, setStatusLig
         toast.error('Error fetching data:');
     }
 };
+
+export const setStatusLightID = async (id, setStatus, handleClose, value) => {
+    try {
+        await postDeviceStatus(`feeds/light-${id}/data`, { value: value });
+        setStatus(value);
+        toast.success(`${value === '1' ? 'Bật' : 'Tắt'} đèn thành công`);
+        handleClose();
+    } catch (error) {
+        handleClose();
+        console.error('Error fetching data:', error);
+        toast.error('Error fetching data:');
+    }
+};
 export const turnOffLight = async (setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose) => {
     try {
         handleClose();

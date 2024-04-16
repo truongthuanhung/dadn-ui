@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BingMicIcon, CloseIcon } from '../../Icons/Icons';
 import { toast } from 'react-toastify';
 import { useDebounce } from '../../../hooks/useDebounce';
-import { turnOffLight, turnOnLight, fanControl } from '../../../utils/voiceControl';
+import { turnOffLight, turnOnLight, fanControl, setStatusLightID } from '../../../utils/voiceControl';
 function SpeechModal({
     content,
     handleClose,
@@ -17,7 +17,23 @@ function SpeechModal({
 }) {
     const handleStopListening = () => {
         stopListening();
-        if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn')) {
+        if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 1')) {
+            setStatusLightID(1, setStatusLight1, handleClose, '1');
+        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 2')) {
+            setStatusLightID(1, setStatusLight2, handleClose, '1');
+        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 3')) {
+            setStatusLightID(3, setStatusLight3, handleClose, '1');
+        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn 4')) {
+            setStatusLightID(4, setStatusLight3, handleClose, '1');
+        } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 1')) {
+            setStatusLightID(1, setStatusLight1, handleClose, '0');
+        } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 2')) {
+            setStatusLightID(1, setStatusLight2, handleClose, '0');
+        } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 3')) {
+            setStatusLightID(3, setStatusLight3, handleClose, '0');
+        } else if ((content.includes('tắt') || content.includes('mở')) && content.includes('đèn 4')) {
+            setStatusLightID(4, setStatusLight3, handleClose, '0');
+        } else if ((content.includes('bật') || content.includes('mở')) && content.includes('đèn')) {
             turnOnLight(setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose);
         } else if (content.includes('tắt') && content.includes('đèn')) {
             turnOffLight(setStatusLight1, setStatusLight2, setStatusLight3, setStatusLight4, handleClose);
@@ -59,7 +75,7 @@ function SpeechModal({
                 >
                     <CloseIcon />
                 </div>
-                <p className="text-[18px] w-[80%]">{content}</p>
+                <p className="text-[18px] w-[80%]">{content === '' ? 'Listening...' : content}</p>
                 <div className="w-[20%] flex items-center justify-end">
                     <div onClick={handleStopListening} className="">
                         <BingMicIcon listening={listening} />
