@@ -31,3 +31,15 @@ export const postDeviceStatus = async (path, data) => {
         });
     return response;
 };
+
+export const getChartData = async (path, params) => {
+    const response = await deviceAPI
+        .get(path, { params: params })
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            return error;
+        });
+    return response;
+};

@@ -50,3 +50,16 @@ export const fanControl = async (fanSpeed, setFanSpeed, handleClose) => {
     handleClose();
     setFanSpeed(fanSpeed);
 };
+
+export const doorControl = async (value, setStatus, handleClose) => {
+    try {
+        await postDeviceStatus(`feeds/door/data`, { value: value });
+        setStatus(value);
+        toast.success(`${value === '1' ? 'Mở' : 'Đóng'} cửa thành công`);
+        handleClose();
+    } catch (error) {
+        handleClose();
+        console.error('Error fetching data:', error);
+        toast.error('Error fetching data:');
+    }
+};

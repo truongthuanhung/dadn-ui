@@ -206,6 +206,7 @@ function Dashboard() {
             setLoading(false);
         }
     };
+    
     //DOOR
     const [statusDoor, setStatusDoor] = useState('0');
     const [modeDoor, setModeDoor] = useState('manual');
@@ -284,6 +285,10 @@ function Dashboard() {
 
     const [showModal, setShowModal] = useState(false);
     const handleMicClick = () => {
+        if (modeAll === "automatic") {
+            toast.error('Đang ở chế độ tự động');
+            return;
+        }
         setShowModal(true);
         startListening();
     };
@@ -311,6 +316,7 @@ function Dashboard() {
                                 fanSpeed={fanSpeed}
                                 setFanSpeed={(data) => setFanSpeed(data)}
                                 listening={isListening}
+                                setStatusDoor={setStatusDoor}
                             />
                         )}
                     </div>
@@ -412,8 +418,8 @@ function Dashboard() {
                             }}
                             toggleDeviceStatus={() => {
                                 if (loading) return;
-                                else if (modeDoor === "automatic") {
-                                    toast.error("Cửa đang ở chế độ tự động");
+                                else if (modeDoor === 'automatic') {
+                                    toast.error('Cửa đang ở chế độ tự động');
                                     return;
                                 }
                                 handleChangeDoorStatus(statusDoor === '1' ? '0' : '1');

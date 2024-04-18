@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BingMicIcon, CloseIcon } from '../../Icons/Icons';
 import { toast } from 'react-toastify';
 import { useDebounce } from '../../../hooks/useDebounce';
-import { turnOffLight, turnOnLight, fanControl, setStatusLightID } from '../../../utils/voiceControl';
+import { turnOffLight, turnOnLight, fanControl, setStatusLightID, doorControl } from '../../../utils/voiceControl';
 function SpeechModal({
     content,
     handleClose,
@@ -12,6 +12,7 @@ function SpeechModal({
     setStatusLight2,
     fanSpeed,
     setFanSpeed,
+    setStatusDoor
 }) {
     const handleStopListening = () => {
         stopListening();
@@ -35,7 +36,14 @@ function SpeechModal({
             fanControl(0, setFanSpeed, handleClose);
         } else if ((content.includes('bật') || content.includes('mở')) && content.includes('quạt')) {
             fanControl(100, setFanSpeed, handleClose);
-        } else {
+        }
+        else if (content.includes('mở') && content.includes('cửa')) {
+            doorControl('1', setStatusDoor, handleClose)
+        } 
+        else if (content.includes('đóng') && content.includes('cửa')) {
+            doorControl('0', setStatusDoor, handleClose)
+        }
+        else {
             handleClose();
             toast.error('Yêu cầu không hợp lệ');
         }
