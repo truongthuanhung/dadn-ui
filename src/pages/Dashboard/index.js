@@ -16,6 +16,9 @@ import { handleChangeMode } from '../../utils/handleChangeMode.js';
 import { toast } from 'react-toastify';
 const cx = classNames.bind(styles);
 function Dashboard() {
+    const [modeLight, setModeLight] = useState('manual');
+    const [modeFan, setModeFan] = useState('manual');
+    const [modeDoor, setModeDoor] = useState('manual');
     const { text, isListening, startListening, stopListening } = useSpeechRecognition();
 
     const boundContext = useBound();
@@ -45,15 +48,12 @@ function Dashboard() {
 
     //MODE
     const changeMode = (light, fan, door) => {
+        if (loading) return;
+        setLoading(true);
         const sendData = handleChangeMode(light, fan, door);
         try {
             const callAPI = async () => {
                 await postDeviceStatus('feeds/mode/data', { value: sendData });
-                if (light === 'automatic' || fan === 'automatic' || door === 'automatic') {
-                    setModeAll('automatic');
-                } else {
-                    setModeAll('manual');
-                }
                 setLoading(false);
             };
             callAPI();
@@ -62,17 +62,18 @@ function Dashboard() {
             setLoading(false);
         }
     };
-    const [modeAll, setModeAll] = useState('manual');
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [light1, light2, door] = await Promise.all([
+                const [light1, light2, fan, door] = await Promise.all([
                     getDeviceStatus('feeds/light-1/data/last'),
                     getDeviceStatus('feeds/light-2/data/last'),
+                    getDeviceStatus('feeds/fan/data/last'),
                     getDeviceStatus('feeds/door/data/last'),
                 ]);
                 setStatusLight1(light1.data.value);
                 setStatusLight2(light2.data.value);
+                setFanSpeed(Number(fan.data.value));
                 setStatusDoor(door.data.value);
                 console.log('fetch...');
             } catch (error) {
@@ -80,14 +81,9 @@ function Dashboard() {
             }
         };
         fetchData();
-        let intervalId = null;
-        if (modeAll === 'automatic') {
-            intervalId = setInterval(fetchData, 3000);
-        }
-        if (intervalId) {
-            return () => clearInterval(intervalId);
-        }
-    }, [modeAll]);
+        const intervalId = setInterval(fetchData, 3000);
+        return () => clearInterval(intervalId);
+    }, [modeLight, modeFan, modeDoor]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,48 +93,42 @@ function Dashboard() {
                     setModeLight('manual');
                     setModeFan('manual');
                     setModeDoor('manual');
-                    setModeAll('manual');
                 } else if (Number(mode.data.value) === 1) {
                     setModeLight('automatic');
                     setModeFan('manual');
                     setModeDoor('manual');
-                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 2) {
                     setModeLight('manual');
                     setModeFan('automatic');
                     setModeDoor('manual');
-                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 3) {
                     setModeLight('manual');
                     setModeFan('manual');
                     setModeDoor('automatic');
-                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 4) {
                     setModeLight('automatic');
                     setModeFan('automatic');
                     setModeDoor('manual');
-                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 5) {
                     setModeLight('automatic');
                     setModeFan('manual');
                     setModeDoor('automatic');
-                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 6) {
                     setModeLight('manual');
                     setModeFan('automatic');
                     setModeDoor('automatic');
-                    setModeAll('automatic');
                 } else if (Number(mode.data.value) === 7) {
                     setModeLight('automatic');
                     setModeFan('automatic');
                     setModeDoor('automatic');
-                    setModeAll('automatic');
                 }
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
+        changeMode(modeLight, modeFan, modeDoor);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     useEffect(() => {
         const fetchData = async () => {
@@ -169,7 +159,7 @@ function Dashboard() {
 
     //LIGHT 1
     const [statusLight1, setStatusLight1] = useState('0');
-    const [modeLight, setModeLight] = useState('manual');
+
     const [loading, setLoading] = useState(false);
 
     const handleChangeStatusLight1 = (data) => {
@@ -206,10 +196,10 @@ function Dashboard() {
             setLoading(false);
         }
     };
-    
+
     //DOOR
     const [statusDoor, setStatusDoor] = useState('0');
-    const [modeDoor, setModeDoor] = useState('manual');
+
     const handleChangeDoorStatus = (data) => {
         if (loading) return;
         setLoading(true);
@@ -228,7 +218,7 @@ function Dashboard() {
     //FAN
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
-    const [modeFan, setModeFan] = useState('manual');
+
     const debounced = useDebounce(fanSpeed, 1000);
     const isFirstRender = useRef(true);
     useEffect(() => {
@@ -285,7 +275,7 @@ function Dashboard() {
 
     const [showModal, setShowModal] = useState(false);
     const handleMicClick = () => {
-        if (modeAll === "automatic") {
+        if (modeLight === 'automatic' || modeFan === 'automatic' || modeDoor === 'automatic') {
             toast.error('Đang ở chế độ tự động');
             return;
         }
@@ -359,6 +349,21 @@ function Dashboard() {
                             deviceStatus={statusLight1}
                             deviceMode={modeLight}
                             changeDeviceMode={() => {
+                                if (modeLight === 'automatic') {
+                                    try {
+                                        const callAPI = async (data) => {
+                                            await Promise.all([
+                                                postDeviceStatus('feeds/light-1/data', { value: data }),
+                                                postDeviceStatus('feeds/light-2/data', { value: data }),
+                                            ]);
+                                            setStatusLight1(data);
+                                            setStatusLight2(data);
+                                        };
+                                        callAPI('0');
+                                    } catch (err) {
+                                        console.log(err);
+                                    }
+                                }
                                 setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
                             }}
@@ -377,6 +382,22 @@ function Dashboard() {
                             deviceStatus={statusLight2}
                             deviceMode={modeLight}
                             changeDeviceMode={() => {
+                                if (modeLight === 'automatic') {
+                                    try {
+                                        const callAPI = async (data) => {
+                                            await Promise.all([
+                                                postDeviceStatus('feeds/light-1/data', { value: data }),
+                                                postDeviceStatus('feeds/light-2/data', { value: data }),
+                                            ]);
+                                            setStatusLight1(data);
+                                            setStatusLight2(data);
+                                        };
+                                        callAPI('0');
+                                    } catch (err) {
+                                        console.log(err);
+                                        setLoading(false);
+                                    }
+                                }
                                 setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
                                 changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
                             }}

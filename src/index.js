@@ -9,19 +9,17 @@ import { NotifyProvider } from './contexts/useNotify';
 import { BoundProvider } from './contexts/useBound';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
-        <AuthProvider>
-            <ProfileProvider>
-                <NotifyProvider>
-                    <BoundProvider>
-                        <GlobalStyles>
-                            <App />
-                        </GlobalStyles>
-                    </BoundProvider>
-                </NotifyProvider>
-            </ProfileProvider>
-        </AuthProvider>
-    </React.StrictMode>,
+    <AuthProvider>
+        <ProfileProvider>
+            <NotifyProvider>
+                <BoundProvider>
+                    <GlobalStyles>
+                        <App />
+                    </GlobalStyles>
+                </BoundProvider>
+            </NotifyProvider>
+        </ProfileProvider>
+    </AuthProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function
