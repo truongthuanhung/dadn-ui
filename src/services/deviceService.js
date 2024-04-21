@@ -4,7 +4,7 @@ const deviceAPI = axios.create({
     baseURL: 'https://io.adafruit.com/api/v2/hungtruongthuan/',
     headers: {
         'Content-Type': 'application/json',
-        'X-AIO-Key': 'aio_MyEx58vqWbv3PmCOSCLpXGf1eWS3',
+        'X-AIO-Key': 'aio_NIOD29Gab218Cf9XlHHP4OHckjSI',
     },
 });
 
@@ -23,6 +23,18 @@ export const getDeviceStatus = async (path) => {
 export const postDeviceStatus = async (path, data) => {
     const response = await deviceAPI
         .post(path, data)
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            return error;
+        });
+    return response;
+};
+
+export const getChartData = async (path, params) => {
+    const response = await deviceAPI
+        .get(path, { params: params })
         .then((response) => {
             return response;
         })
