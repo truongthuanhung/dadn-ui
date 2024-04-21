@@ -1,44 +1,76 @@
 import React from 'react';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js';
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
-function ChartItem() {
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+const extractDataAndValue = (data) => {
+    const dates = data?.map((item) => item[0]);
+    const values = data?.map((item) => parseFloat(item[1]));
+
+    return { dates, values };
+};
+const formatDates = (dateArray) => {
+    const formattedDates = dateArray?.map((dateString) => {
+        const date = new Date(dateString);
+        const month = date.toLocaleString('en-US', { month: 'short' });
+        const day = date.getDate();
+        return `${month} ${day}`;
+    });
+    return formattedDates;
+};
+function ChartItem({ dataset, tab }) {
+    let title = '';
+    let color = '#000000';
+    let text = '';
+    if (tab === 0) {
+        title = 'Lighting';
+        color = '#BEE979';
+        text = '%';
+    } else if (tab === 1) {
+        title = 'Humidity';
+        color = '#BFE0FF';
+        text = '%';
+    } else {
+        title = 'Temperature';
+        color = '#E7C88B';
+        text = '°C';
+    }
+
     const data = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels: formatDates(extractDataAndValue(dataset[tab]).dates),
         datasets: [
             {
-                label: 'First dataset',
-                data: [33, 53, 85, 41, 44, 65],
-                fill: true,
-                backgroundColor: 'rgba(75,192,192,0.2)',
-                borderColor: 'rgba(75,192,192,1)',
-            },
-            {
-                label: 'Second dataset',
-                data: [33, 25, 35, 51, 54, 76],
+                label: title,
+                data: extractDataAndValue(dataset[tab]).values,
                 fill: false,
-                borderColor: '#742774',
+                backgroundColor: color,
+                borderColor: color,
             },
         ],
     };
     const chartOptions = {
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    fontSize: 14, // Adjust the font size here
-                },
-            },
-        },
+        responsive: true,
         plugins: {
             title: {
                 display: true,
-                text: 'TỔNG LƯỢNG GIẤY ĐÃ IN',
-                color: '#1488db',
-                font: {
-                    size: 18,
-                },
+                text: 'THỐNG KÊ CẢM BIẾN',
+            },
+        },
+        scales: {
+            y: {
+                title: { display: true, text: text, offset: true },
+            },
+            x: {
+                title: { display: true, text: 'Date' },
             },
         },
     };

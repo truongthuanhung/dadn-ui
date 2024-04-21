@@ -29,7 +29,7 @@ function Notification() {
         fetchData();
     };
     return (
-        <div className="mt-[65px] md:ml-[70px] lg:px-[75px] md:px-[40px] px-[16px] py-[24px] min-h-[800px]">
+        <div className="mt-[65px] md:ml-[70px] lg:px-[75px] md:px-[40px] px-[16px] pt-[24px] pb-[64px] min-h-[100vh]">
             <h2 className="text-[28px] font-bold mb-[28px]">Thông báo</h2>
 
             <div className="overflow-x-scroll md:overflow-x-hidden">
@@ -66,28 +66,10 @@ function Notification() {
             >
                 Đánh dấu đã đọc
             </div>
-            {tab === 1 ? (
-                <div className="mt-[28px]">
-                    {notifyContext.notification.map((item, index) => (
-                        <NotifyItem
-                            key={index}
-                            id={item._id}
-                            name={item.name}
-                            value={item.value}
-                            time={item.time}
-                            type={item.type}
-                            flag={item.flag}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <></>
-            )}
-            {tab === 2 ? (
-                <div className="mt-[28px]">
-                    {notifyContext.notification
-                        .filter((obj) => obj.type === 'Vượt ngưỡng' || obj.type === 'Dưới ngưỡng')
-                        .map((item, index) => (
+            <div className="overflow-y-scroll mt-[10px] lg:pr-[24px]">
+                {tab === 1 ? (
+                    <div className="mt-[28px] max-h-[75vh]">
+                        {notifyContext.notification.map((item, index) => (
                             <NotifyItem
                                 key={index}
                                 id={item._id}
@@ -98,29 +80,49 @@ function Notification() {
                                 flag={item.flag}
                             />
                         ))}
-                </div>
-            ) : (
-                <></>
-            )}
-            {tab === 3 ? (
-                <div className="mt-[28px]">
-                    {notifyContext.notification
-                        .filter((obj) => obj.type === 'Phát hiện người')
-                        .map((item, index) => (
-                            <NotifyItem
-                                key={index}
-                                id={item._id}
-                                name={item.name}
-                                value={item.value}
-                                time={item.time}
-                                type={item.type}
-                                flag={item.flag}
-                            />
-                        ))}
-                </div>
-            ) : (
-                <></>
-            )}
+                    </div>
+                ) : (
+                    <></>
+                )}
+                {tab === 2 ? (
+                    <div className="mt-[28px] max-h-[75vh]">
+                        {notifyContext.notification
+                            .filter((obj) => obj.type === 'Vượt ngưỡng' || obj.type === 'Dưới ngưỡng')
+                            .map((item, index) => (
+                                <NotifyItem
+                                    key={index}
+                                    id={item._id}
+                                    name={item.name}
+                                    value={item.value}
+                                    time={item.time}
+                                    type={item.type}
+                                    flag={item.flag}
+                                />
+                            ))}
+                    </div>
+                ) : (
+                    <></>
+                )}
+                {tab === 3 ? (
+                    <div className="mt-[28px] max-h-[75vh]">
+                        {notifyContext.notification
+                            .filter((obj) => obj.type === 'Phát hiện người')
+                            .map((item, index) => (
+                                <NotifyItem
+                                    key={index}
+                                    id={item._id}
+                                    name={item.name}
+                                    value={item.value}
+                                    time={item.time}
+                                    type={item.type}
+                                    flag={item.flag}
+                                />
+                            ))}
+                    </div>
+                ) : (
+                    <></>
+                )}
+            </div>
         </div>
     );
 }

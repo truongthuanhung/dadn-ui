@@ -11,10 +11,15 @@ import SpeechModal from '../../components/Modals/SpeechModal';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useBound } from '../../contexts/useBound';
 import { getBound } from '../../services/boundAPI';
-import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts'
+import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts';
+import { handleChangeMode } from '../../utils/handleChangeMode.js';
+import { toast } from 'react-toastify';
 const cx = classNames.bind(styles);
 function Dashboard() {
-    const {text, isListening, startListening, stopListening} = useSpeechRecognition();
+    const [modeLight, setModeLight] = useState('manual');
+    const [modeFan, setModeFan] = useState('manual');
+    const [modeDoor, setModeDoor] = useState('manual');
+    const { text, isListening, startListening, stopListening } = useSpeechRecognition();
 
     const boundContext = useBound();
     useEffect(() => {
@@ -42,31 +47,89 @@ function Dashboard() {
     const [humid, setHumid] = useState(0);
 
     //MODE
-    const [mode, setMode] = useState('manual');
+    const changeMode = (light, fan, door) => {
+        if (loading) return;
+        setLoading(true);
+        const sendData = handleChangeMode(light, fan, door);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/mode/data', { value: sendData });
+                setLoading(false);
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [light1, light2, light3, light4] = await Promise.all([
+                const [light1, light2, fan, door] = await Promise.all([
                     getDeviceStatus('feeds/light-1/data/last'),
                     getDeviceStatus('feeds/light-2/data/last'),
-                    getDeviceStatus('feeds/light-3/data/last'),
-                    getDeviceStatus('feeds/light-4/data/last'),
+                    getDeviceStatus('feeds/fan/data/last'),
+                    getDeviceStatus('feeds/door/data/last'),
                 ]);
                 setStatusLight1(light1.data.value);
                 setStatusLight2(light2.data.value);
-                setStatusLight3(light3.data.value);
-                setStatusLight4(light4.data.value);
+                setFanSpeed(Number(fan.data.value));
+                setStatusDoor(door.data.value);
+                console.log('fetch...');
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-        if (mode === 'automatic') {
-            const intervalId = setInterval(fetchData, 5000);
-            return () => clearInterval(intervalId);
-        }
-    }, [mode]);
+        const intervalId = setInterval(fetchData, 3000);
+        return () => clearInterval(intervalId);
+    }, [modeLight, modeFan, modeDoor]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const mode = await getDeviceStatus('feeds/mode/data/last');
+                if (Number(mode.data.value) === 0) {
+                    setModeLight('manual');
+                    setModeFan('manual');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 1) {
+                    setModeLight('automatic');
+                    setModeFan('manual');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 2) {
+                    setModeLight('manual');
+                    setModeFan('automatic');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 3) {
+                    setModeLight('manual');
+                    setModeFan('manual');
+                    setModeDoor('automatic');
+                } else if (Number(mode.data.value) === 4) {
+                    setModeLight('automatic');
+                    setModeFan('automatic');
+                    setModeDoor('manual');
+                } else if (Number(mode.data.value) === 5) {
+                    setModeLight('automatic');
+                    setModeFan('manual');
+                    setModeDoor('automatic');
+                } else if (Number(mode.data.value) === 6) {
+                    setModeLight('manual');
+                    setModeFan('automatic');
+                    setModeDoor('automatic');
+                } else if (Number(mode.data.value) === 7) {
+                    setModeLight('automatic');
+                    setModeFan('automatic');
+                    setModeDoor('automatic');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchData();
+        changeMode(modeLight, modeFan, modeDoor);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -96,7 +159,7 @@ function Dashboard() {
 
     //LIGHT 1
     const [statusLight1, setStatusLight1] = useState('0');
-    const [mode1, setMode1] = useState('manual');
+
     const [loading, setLoading] = useState(false);
 
     const handleChangeStatusLight1 = (data) => {
@@ -117,7 +180,6 @@ function Dashboard() {
 
     //LIGHT 2
     const [statusLight2, setStatusLight2] = useState('0');
-    const [mode2, setMode2] = useState('manual');
 
     const handleChangeStatusLight2 = (data) => {
         if (loading) return;
@@ -134,18 +196,18 @@ function Dashboard() {
             setLoading(false);
         }
     };
-    //LIGHT 3
-    const [statusLight3, setStatusLight3] = useState('0');
-    const [mode3, setMode3] = useState('manual');
 
-    const handleChangeStatusLight3 = (data) => {
+    //DOOR
+    const [statusDoor, setStatusDoor] = useState('0');
+
+    const handleChangeDoorStatus = (data) => {
         if (loading) return;
         setLoading(true);
         try {
             const callAPI = async () => {
-                await postDeviceStatus('feeds/light-3/data', { value: data });
+                await postDeviceStatus('feeds/door/data', { value: data });
                 setLoading(false);
-                setStatusLight3(statusLight3 === '1' ? '0' : '1');
+                setStatusDoor(statusDoor === '1' ? '0' : '1');
             };
             callAPI();
         } catch (err) {
@@ -153,32 +215,11 @@ function Dashboard() {
             setLoading(false);
         }
     };
-
-    //LIGHT 4
-    const [statusLight4, setStatusLight4] = useState('0');
-    const [mode4, setMode4] = useState('manual');
-
-    const handleChangeStatusLight4 = (data) => {
-        if (loading) return;
-        setLoading(true);
-        try {
-            const callAPI = async () => {
-                await postDeviceStatus('feeds/light-4/data', { value: data });
-                setLoading(false);
-                setStatusLight4(statusLight4 === '1' ? '0' : '1');
-            };
-            callAPI();
-        } catch (err) {
-            console.log(err);
-            setLoading(false);
-        }
-    };
-
     //FAN
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
-    const [modeFan, setModeFan] = useState('manual');
-    const debounced = useDebounce(fanSpeed, 1500);
+
+    const debounced = useDebounce(fanSpeed, 1000);
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (loading || debounced === '') {
@@ -234,6 +275,10 @@ function Dashboard() {
 
     const [showModal, setShowModal] = useState(false);
     const handleMicClick = () => {
+        if (modeLight === 'automatic' || modeFan === 'automatic' || modeDoor === 'automatic') {
+            toast.error('Đang ở chế độ tự động');
+            return;
+        }
         setShowModal(true);
         startListening();
     };
@@ -258,11 +303,10 @@ function Dashboard() {
                                 stopListening={stopListening}
                                 setStatusLight1={(data) => setStatusLight1(data)}
                                 setStatusLight2={(data) => setStatusLight2(data)}
-                                setStatusLight3={(data) => setStatusLight3(data)}
-                                setStatusLight4={(data) => setStatusLight4(data)}
                                 fanSpeed={fanSpeed}
                                 setFanSpeed={(data) => setFanSpeed(data)}
                                 listening={isListening}
+                                setStatusDoor={setStatusDoor}
                             />
                         )}
                     </div>
@@ -303,33 +347,68 @@ function Dashboard() {
                             deviceType="light"
                             deviceName="Light 1"
                             deviceStatus={statusLight1}
-                            deviceMode={mode1}
-                            changeDeviceMode={() => setMode1(mode1 === 'automatic' ? 'manual' : 'automatic')}
-                            toggleDeviceStatus={() => handleChangeStatusLight1(statusLight1 === '1' ? '0' : '1')}
+                            deviceMode={modeLight}
+                            changeDeviceMode={() => {
+                                if (modeLight === 'automatic') {
+                                    try {
+                                        const callAPI = async (data) => {
+                                            await Promise.all([
+                                                postDeviceStatus('feeds/light-1/data', { value: data }),
+                                                postDeviceStatus('feeds/light-2/data', { value: data }),
+                                            ]);
+                                            setStatusLight1(data);
+                                            setStatusLight2(data);
+                                        };
+                                        callAPI('0');
+                                    } catch (err) {
+                                        console.log(err);
+                                    }
+                                }
+                                setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
+                            }}
+                            toggleDeviceStatus={() => {
+                                if (loading) return;
+                                else if (modeLight === 'automatic') {
+                                    toast.error('Đèn đang ở chế độ tự động');
+                                    return;
+                                }
+                                handleChangeStatusLight1(statusLight1 === '1' ? '0' : '1');
+                            }}
                         />
                         <DeviceItem
                             deviceType="light"
                             deviceName="Light 2"
                             deviceStatus={statusLight2}
-                            deviceMode={mode2}
-                            changeDeviceMode={() => setMode2(mode2 === 'automatic' ? 'manual' : 'automatic')}
-                            toggleDeviceStatus={() => handleChangeStatusLight2(statusLight2 === '1' ? '0' : '1')}
-                        />
-                        <DeviceItem
-                            deviceType="light"
-                            deviceName="Light 3"
-                            deviceStatus={statusLight3}
-                            deviceMode={mode3}
-                            changeDeviceMode={() => setMode3(mode3 === 'automatic' ? 'manual' : 'automatic')}
-                            toggleDeviceStatus={() => handleChangeStatusLight3(statusLight3 === '1' ? '0' : '1')}
-                        />
-                        <DeviceItem
-                            deviceType="light"
-                            deviceName="Light 4"
-                            deviceStatus={statusLight4}
-                            deviceMode={mode4}
-                            changeDeviceMode={() => setMode4(mode4 === 'automatic' ? 'manual' : 'automatic')}
-                            toggleDeviceStatus={() => handleChangeStatusLight4(statusLight4 === '1' ? '0' : '1')}
+                            deviceMode={modeLight}
+                            changeDeviceMode={() => {
+                                if (modeLight === 'automatic') {
+                                    try {
+                                        const callAPI = async (data) => {
+                                            await Promise.all([
+                                                postDeviceStatus('feeds/light-1/data', { value: data }),
+                                                postDeviceStatus('feeds/light-2/data', { value: data }),
+                                            ]);
+                                            setStatusLight1(data);
+                                            setStatusLight2(data);
+                                        };
+                                        callAPI('0');
+                                    } catch (err) {
+                                        console.log(err);
+                                        setLoading(false);
+                                    }
+                                }
+                                setModeLight(modeLight === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight === 'automatic' ? 'manual' : 'automatic', modeFan, modeDoor);
+                            }}
+                            toggleDeviceStatus={() => {
+                                if (loading) return;
+                                else if (modeLight === 'automatic') {
+                                    toast.error('Đèn đang ở chế độ tự động');
+                                    return;
+                                }
+                                handleChangeStatusLight2(statusLight2 === '1' ? '0' : '1');
+                            }}
                         />
                         <DeviceItem
                             deviceType="fan"
@@ -337,10 +416,35 @@ function Dashboard() {
                             fanSpeed={fanSpeed === '' ? 0 : fanSpeed}
                             deviceMode={modeFan}
                             changeDeviceMode={() => {
-                                if (loading) return;
                                 setModeFan(modeFan === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight, modeFan === 'automatic' ? 'manual' : 'automatic', modeDoor);
                             }}
-                            setFanSpeed={(e) => setFanSpeed(Number(e.target.value))}
+                            setFanSpeed={(e) => {
+                                if (loading) return;
+                                else if (modeFan === 'automatic') {
+                                    toast.error('Quạt đang ở chế độ tự động');
+                                    return;
+                                }
+                                setFanSpeed(Number(e.target.value));
+                            }}
+                        />
+                        <DeviceItem
+                            deviceType="door"
+                            deviceName="Door"
+                            deviceStatus={statusDoor}
+                            deviceMode={modeDoor}
+                            changeDeviceMode={() => {
+                                setModeDoor(modeDoor === 'automatic' ? 'manual' : 'automatic');
+                                changeMode(modeLight, modeFan, modeDoor === 'automatic' ? 'manual' : 'automatic');
+                            }}
+                            toggleDeviceStatus={() => {
+                                if (loading) return;
+                                else if (modeDoor === 'automatic') {
+                                    toast.error('Cửa đang ở chế độ tự động');
+                                    return;
+                                }
+                                handleChangeDoorStatus(statusDoor === '1' ? '0' : '1');
+                            }}
                         />
                     </div>
                 </div>
