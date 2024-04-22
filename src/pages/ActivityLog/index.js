@@ -102,7 +102,7 @@ function ActivityLog() {
     return (
         <div className="mt-[65px] md:ml-[70px] lg:px-[75px] md:px-[40px] px-[16px] py-[24px] min-h-[100vh] relative overflow-hidden">
             <h2 className="text-[28px] font-bold mb-[28px]">Hoạt động thiết bị</h2>
-            <div className="overflow-x-scroll lg:overflow-x-hidden">
+            <div className="overflow-x-auto">
                 <div className="flex flex-row items-center justify-start gap-[24px] min-w-[1000px]">
                     <div
                         onClick={() => setTab('all')}
@@ -172,7 +172,7 @@ function ActivityLog() {
             </div>
 
             <div className="relative overflow-x-auto mt-[28px]">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 min-w-[650px]">
                     <thead className="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" className="px-6 py-3 text-[16px]">
