@@ -1,4 +1,4 @@
-import { HomeIcon, DashboardIcon, SettingsIcon, NotifyIcon, ChartIcon } from '../../../Icons/Icons';
+import { HomeIcon, DashboardIcon, SettingsIcon, NotifyIcon, ChartIcon, HistoryIcon } from '../../../Icons/Icons';
 import { Link } from 'react-router-dom';
 import SidebarItem from './SidebarItem';
 import './Sidebar.scss';
@@ -33,6 +33,9 @@ function Sidebar({ sidebarVisible, hideSidebar }) {
                         <></>
                     )}
                 </div>
+            </Link>
+            <Link to={authContext.auth ? '/activity' : '/login'} onClick={() => hideSidebar()}>
+                <SidebarItem content="Hoạt động thiết bị" Icon={HistoryIcon} />
             </Link>
             <Link to={authContext.auth ? '/report' : '/login'} onClick={() => hideSidebar()}>
                 <SidebarItem content="Báo cáo" Icon={ChartIcon} />
