@@ -4,7 +4,7 @@ const deviceAPI = axios.create({
     baseURL: 'https://io.adafruit.com/api/v2/hungtruongthuan/',
     headers: {
         'Content-Type': 'application/json',
-        'X-AIO-Key': 'aio_pSAg87LfzOUHZm9Iek4xzxAxOLTw',
+        'X-AIO-Key': 'aio_FENN05eLt0bOlmCqxubyYJ8FEujt',
     },
 });
 
