@@ -6,6 +6,7 @@ import Report from '../pages/Report';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import Page404 from '../pages/404';
+import ActivityLog from '../pages/ActivityLog';
 const publicRoutes = [
     { path: '/', component: Home },
     { path: '', component: Home },
@@ -19,6 +20,7 @@ const privateRoutes = [
     { path: '/notification', component: Notification },
     { path: '/report', component: Report },
     { path: '/profile', component: Profile },
+    { path: '/activity', component: ActivityLog },
 ];
 
 export { publicRoutes, privateRoutes, unknownRoutes };
