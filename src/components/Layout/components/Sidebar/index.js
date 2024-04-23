@@ -35,7 +35,7 @@ function Sidebar({ sidebarVisible, hideSidebar }) {
                 </div>
             </Link>
             <Link to={authContext.auth ? '/activity' : '/login'} onClick={() => hideSidebar()}>
-                <SidebarItem content="Hoạt động thiết bị" Icon={HistoryIcon} />
+                <SidebarItem content="Hoạt động" Icon={HistoryIcon} />
             </Link>
             <Link to={authContext.auth ? '/report' : '/login'} onClick={() => hideSidebar()}>
                 <SidebarItem content="Báo cáo" Icon={ChartIcon} />
