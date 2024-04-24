@@ -49,6 +49,16 @@ export const turnOffLight = async (setStatusLight1, setStatusLight2, handleClose
 export const fanControl = async (fanSpeed, setFanSpeed, handleClose) => {
     handleClose();
     setFanSpeed(fanSpeed);
+    try {
+        const callAPI = async () => {
+            await postDeviceStatus('feeds/fan/data', { value: Number(fanSpeed) });
+            toast.success('Thay đổi tốc độ quạt thành công');
+        };
+        callAPI();
+    } catch (err) {
+        console.log(err);
+        toast.error('Thay đổi tốc độ quạt thất bại');
+    }
 };
 
 export const doorControl = async (value, setStatus, handleClose) => {

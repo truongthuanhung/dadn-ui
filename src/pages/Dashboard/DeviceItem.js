@@ -16,7 +16,7 @@ const DeviceItem = React.memo(
         fanSpeed,
         setFanSpeed,
     }) => {
-        console.log('re-render')
+        console.log('re-render');
         let Icon = LampIcon;
         if (deviceType === 'fan') Icon = FanIcon;
         if (deviceType === 'door') Icon = DoorIcon;
@@ -30,7 +30,7 @@ const DeviceItem = React.memo(
                     <div className="w-[44px] h-[44px] rounded-[10px] bg-[#2892F0] flex justify-center items-center">
                         <Icon />
                     </div>
-                    <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] min-w-[76px]">{deviceName}</p>
+                    <p className="font-bold text-[#1a1a1a] text-[16px] min-w-[76px]">{deviceName}</p>
                 </div>
                 <div className="flex-1 flex flex-col md:flex-row justify-end lg:gap-[328px] gap-[48px]">
                     {deviceType === 'fan' ? (
@@ -44,13 +44,11 @@ const DeviceItem = React.memo(
                                 onChange={setFanSpeed}
                                 className="flex-1 w-[100px] lg:w-[250px] block h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
                             />
-                            <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] md:min-w-[122px]">
-                                Speed: {fanSpeed}%
-                            </p>
+                            <p className="font-bold text-[#1a1a1a] text-[16px] md:min-w-[122px]">Speed: {fanSpeed}%</p>
                         </div>
                     ) : (
                         <div className="flex flex-row items-center justify-end gap-[18px]">
-                            <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] min-w-[58px]">
+                            <p className="font-bold text-[#1a1a1a] text-[16px] min-w-[58px]">
                                 {deviceType !== 'door' && (deviceStatus === '1' ? 'On' : 'Off')}
                                 {deviceType === 'door' && (deviceStatus === '1' ? 'Opened' : 'Closed')}
                             </p>
@@ -60,11 +58,11 @@ const DeviceItem = React.memo(
                     )}
 
                     <div className={cx('flex items-center justify-end flex-row')}>
-                        <p className="font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] mr-[8px]">Mode:</p>
+                        <p className="font-bold text-[#1a1a1a] text-[16px] mr-[8px]">Mode:</p>
                         <select
                             value={deviceMode}
                             onChange={changeDeviceMode}
-                            className={`font-bold text-[#1a1a1a] text-[16px] lg:text-[18px] ${
+                            className={`font-bold text-[#1a1a1a] text-[16px]  ${
                                 deviceStatus === '1' ? 'bg-[#C3DBFF]' : ' bg-[#f2f2f2]'
                             }`}
                         >

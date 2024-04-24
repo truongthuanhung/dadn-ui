@@ -11,7 +11,7 @@ function NotifyItem({ flag, name, time, type, value, id }) {
         const fetchData = async () => {
             try {
                 await readNotify({ _id: id });
-                toast.success('Đã đọc thông báo')
+                toast.success('Đã đọc thông báo');
                 notifyContext.reRender();
             } catch (error) {
                 console.error(error);
@@ -32,9 +32,15 @@ function NotifyItem({ flag, name, time, type, value, id }) {
         sensorName = 'Ánh sáng';
         unit = '%';
     }
-    let content = `${sensorName} ${type.toLowerCase()} bình thường, giá trị ${value}${unit} lúc ${
-        convertTime(time).slice(0, 10) + ' ' + convertTime(time).slice(11, 19)
-    }`;
+
+    let content = '';
+    if (name === 'warning') {
+        content = `Phát hiện người trước cửa lúc ${convertTime(time).slice(0, 10) + ' ' + convertTime(time).slice(11, 19)}`;
+    } else {
+        content = `${sensorName} ${type.toLowerCase()} bình thường, giá trị ${value}${unit} lúc ${
+            convertTime(time).slice(0, 10) + ' ' + convertTime(time).slice(11, 19)
+        }`;
+    }
 
     return (
         <div
