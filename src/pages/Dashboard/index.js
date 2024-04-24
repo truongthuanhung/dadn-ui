@@ -21,7 +21,7 @@ function Dashboard() {
     const [modeFan, setModeFan] = useState('manual');
     const [modeDoor, setModeDoor] = useState('manual');
     const { text, isListening, startListening, stopListening } = useSpeechRecognition();
-
+    const [personDetect, setPersonDetect] = useState(0);
     const boundContext = useBound();
     useEffect(() => {
         const fetchData = async () => {
@@ -76,14 +76,18 @@ function Dashboard() {
                 setStatusLight2(light2.data.value);
                 setFanSpeed(Number(fan.data.value));
                 setStatusDoor(door.data.value);
-                console.log('fetch...');
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-        const intervalId = setInterval(fetchData, 3000);
-        return () => clearInterval(intervalId);
+        let intervalId = null;
+        if (modeLight === 'automatic' || modeFan === 'automatic' || modeDoor === 'automatic') {
+            intervalId = setInterval(fetchData, 3000);
+        }
+        if (intervalId != null) {
+            return () => clearInterval(intervalId);
+        }
     }, [modeLight, modeFan, modeDoor]);
 
     useEffect(() => {
@@ -220,7 +224,7 @@ function Dashboard() {
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
 
-    const debounced = useDebounce(fanSpeed, 1000);
+    const debounced = useDebounce(fanSpeed, 2000);
     const isFirstRender = useRef(true);
     useEffect(() => {
         if (loading || debounced === '') {
@@ -283,6 +287,24 @@ function Dashboard() {
         setShowModal(true);
         startListening();
     };
+
+    const handleChangePersonDetect = (value) => {
+        if (loading) return;
+        setLoading(true);
+        try {
+            const callAPI = async () => {
+                await postDeviceStatus('feeds/person/data', { value: value });
+                setLoading(false);
+                setPersonDetect(personDetect === 1 ? 0 : 1);
+            };
+            callAPI();
+        } catch (err) {
+            console.log(err);
+            setLoading(false);
+        }
+    };
+
+    
     return (
         <div
             className={cx(
