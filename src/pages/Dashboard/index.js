@@ -2,13 +2,12 @@ import classNames from 'classnames/bind';
 import styles from './Dashboard.module.scss';
 import SensorItem from './SensorItem';
 import DeviceItem from './DeviceItem';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/useAuth';
 import { getDeviceStatus, postDeviceStatus } from '../../services/deviceService';
 import { MicIcon } from '../../components/Icons/Icons';
 import SpeechModal from '../../components/Modals/SpeechModal';
-import { useDebounce } from '../../hooks/useDebounce';
 import { useBound } from '../../contexts/useBound';
 import { getBound } from '../../services/boundAPI';
 import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts';
@@ -91,48 +90,69 @@ function Dashboard() {
     }, [modeLight, modeFan, modeDoor]);
 
     useEffect(() => {
+        const callAPI = async (light, fan, door, person) => {
+            try {
+                await Promise.all([
+                    postDeviceStatus('feeds/mode/data', { value: handleChangeMode(light, fan, door) }),
+                    postDeviceStatus('feeds/person/data', { value: person }),
+                ]);
+            } catch (error) {
+                console.error(error);
+            }
+        };
         const fetchData = async () => {
             try {
-                const mode = await getDeviceStatus('feeds/mode/data/last');
+                const [mode, person] = await Promise.all([
+                    getDeviceStatus('feeds/mode/data/last'),
+                    getDeviceStatus('feeds/person/data/last'),
+                ]);
+                setPersonDetect(Number(person.data.value));
                 if (Number(mode.data.value) === 0) {
                     setModeLight('manual');
                     setModeFan('manual');
                     setModeDoor('manual');
+                    callAPI('manual', 'manual', 'manual', Number(person.data.value));
                 } else if (Number(mode.data.value) === 1) {
                     setModeLight('automatic');
                     setModeFan('manual');
                     setModeDoor('manual');
+                    callAPI('automatic', 'manual', 'manual', Number(person.data.value));
                 } else if (Number(mode.data.value) === 2) {
                     setModeLight('manual');
                     setModeFan('automatic');
                     setModeDoor('manual');
+                    callAPI('manual', 'automatic', 'manual', Number(person.data.value));
                 } else if (Number(mode.data.value) === 3) {
                     setModeLight('manual');
                     setModeFan('manual');
                     setModeDoor('automatic');
+                    callAPI('manual', 'manual', 'automatic', Number(person.data.value));
                 } else if (Number(mode.data.value) === 4) {
                     setModeLight('automatic');
                     setModeFan('automatic');
                     setModeDoor('manual');
+                    callAPI('automatic', 'automatic', 'manual', Number(person.data.value));
                 } else if (Number(mode.data.value) === 5) {
                     setModeLight('automatic');
                     setModeFan('manual');
                     setModeDoor('automatic');
+                    callAPI('automatic', 'manual', 'automatic', Number(person.data.value));
                 } else if (Number(mode.data.value) === 6) {
                     setModeLight('manual');
                     setModeFan('automatic');
                     setModeDoor('automatic');
+                    callAPI('manual', 'automatic', 'automatic', Number(person.data.value));
                 } else if (Number(mode.data.value) === 7) {
                     setModeLight('automatic');
                     setModeFan('automatic');
                     setModeDoor('automatic');
+                    callAPI('automatic', 'automatic', 'automatic', Number(person.data.value));
                 }
             } catch (error) {
                 console.error(error);
             }
         };
         fetchData();
-        changeMode(modeLight, modeFan, modeDoor);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     useEffect(() => {
@@ -224,28 +244,6 @@ function Dashboard() {
     const [fanSpeed, setFanSpeed] = useState('');
     const [renderFan, setRenderFan] = useState(true);
 
-    const debounced = useDebounce(fanSpeed, 2000);
-    const isFirstRender = useRef(true);
-    useEffect(() => {
-        if (loading || debounced === '') {
-        } else if (isFirstRender.current) {
-            isFirstRender.current = false;
-        } else {
-            setLoading(true);
-            try {
-                const callAPI = async () => {
-                    await postDeviceStatus('feeds/fan/data', { value: fanSpeed });
-                    setLoading(false);
-                    setRenderFan(!renderFan);
-                };
-                callAPI();
-            } catch (err) {
-                console.log(err);
-                setLoading(false);
-            }
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debounced]);
     useEffect(() => {
         setLoading(true);
         try {
@@ -304,7 +302,6 @@ function Dashboard() {
         }
     };
 
-    
     return (
         <div
             className={cx(
@@ -455,8 +452,20 @@ function Dashboard() {
                                 else if (modeFan === 'automatic') {
                                     toast.error('Quạt đang ở chế độ tự động');
                                     return;
+                                } else {
+                                    setFanSpeed(Number(e.target.value));
+                                    try {
+                                        const callAPI = async () => {
+                                            await postDeviceStatus('feeds/fan/data', { value: Number(e.target.value) });
+                                            toast.success('Thay đổi tốc độ quạt thành công');
+                                        };
+                                        callAPI();
+                                    } catch (err) {
+                                        console.log(err);
+                                        toast.error('Thay đổi tốc độ quạt thất bại');
+                                        setRenderFan(!renderFan);
+                                    }
                                 }
-                                setFanSpeed(Number(e.target.value));
                             }}
                         />
                         <DeviceItem
