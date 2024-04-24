@@ -14,6 +14,7 @@ import { getBound } from '../../services/boundAPI';
 import useSpeechRecognition from '../../hooks/useSpeechRecognition.ts';
 import { handleChangeMode } from '../../utils/handleChangeMode.js';
 import { toast } from 'react-toastify';
+import Switch from 'react-switch';
 const cx = classNames.bind(styles);
 function Dashboard() {
     const [modeLight, setModeLight] = useState('manual');
@@ -343,6 +344,14 @@ function Dashboard() {
                         </div>
                     </div>
                     <div className="flex flex-col md:flex-row flex-wrap mb-[28px] md:gap-[16px] gap-[10px]">
+                        <div className="flex flex-row items-center justify-end gap-[18px]">
+                            <p className="font-bold text-[#1a1a1a] text-[16px] min-w-[58px]">Phát hiện người</p>
+
+                            <Switch
+                                onChange={() => handleChangePersonDetect(personDetect === 1 ? 0 : 1)}
+                                checked={personDetect === 1}
+                            />
+                        </div>
                         <DeviceItem
                             deviceType="light"
                             deviceName="Light 1"
